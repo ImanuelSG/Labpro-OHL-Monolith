@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link href="/css/main.css" rel="stylesheet" />
+    <script defer src="/js/login/login.js"></script>
+  </head>
+  <body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div class="w-full max-w-lg bg-white p-20 rounded-lg shadow-md">
+      <h2 class="text-3xl font-semibold text-center mb-6 p-10">Login</h2>
+      <form id="loginForm" action="/login" method="POST">
+        {{> input id="username" label="Username or Email" name="username" type="text" placeholder="Enter your username or email"}}
+        {{> input id="password" label="Password" name="password" type="password" placeholder="Enter your password"}}
+        <div class="flex items-center justify-between">
+          <button
+            id="loginButton"
+            class="bg-green-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="button"
+            onclick="handleLogin()"
+          >
+            Sign In
+          </button>
+          <a
+            class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+            href="/register"
+          >
+            Create an account
+          </a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

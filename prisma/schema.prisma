@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Film {
+  id           String   @id @default(cuid())
+  title        String   @unique
+  description  String
+  director     String
+  release_year Int
+  genre        String[]
+  price        Int
+  duration     Int
+  cover_image  String?
+  video_url    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  Tickets  Ticket[]
+  Reviews  Review[]
+  Wishlist Wishlist[]
+}
+
+model User {
+  email          String       @id @unique
+  username       String       @unique
+  hashedPassword String
+  fullName       String
+  balance        Int
+  TicketsBought  Ticket[]
+  Reviews        Review[]
+  Wishlist       Wishlist[]
+  AccessToken    AccessToken?
+}
+
+model Ticket {
+  id        String   @id @default(cuid())
+  filmTitle String
+  userEmail String
+  boughtAt  DateTime
+  User      User     @relation(fields: [userEmail], references: [email])
+  Film      Film     @relation(fields: [filmTitle], references: [title])
+}
+
+model Review {
+  id        String @id @default(cuid())
+  filmTitle String
+  userEmail String
+  Review    String
+  Rating    Int
+  User      User   @relation(fields: [userEmail], references: [email])
+  Film      Film   @relation(fields: [filmTitle], references: [title])
+}
+
+model Wishlist {
+  id        String @id @default(cuid())
+  filmTitle String
+  userEmail String
+  User      User   @relation(fields: [userEmail], references: [email])
+  Film      Film   @relation(fields: [filmTitle], references: [title])
+}
+
+model AccessToken {
+  id        String   @id @default(cuid())
+  token     String
+  userEmail String   @unique
+  User      User     @relation(fields: [userEmail], references: [email])
+  createdAt DateTime
+  expiresAt DateTime
+}
