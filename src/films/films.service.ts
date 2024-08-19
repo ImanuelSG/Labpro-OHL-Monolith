@@ -71,29 +71,30 @@ export class FilmsService {
 
   async create(
     createFilmDto: CreateFilmDto,
-    file: Express.Multer.File,
+    video: Express.Multer.File,
     cover_image?: Express.Multer.File,
   ) {
     try {
       // Upload the video file to Cloudinary
-      const videoResult = await this.cloudinaryService.uploadImage(file);
-
-      let coverImageUrl: string | null = null;
-
-      if (cover_image) {
-        // Upload the cover image to Cloudinary
-        const coverImageResult = await this.cloudinaryService.uploadImage(cover_image);
-        coverImageUrl = coverImageResult.secure_url;
-      }
-
       const { title, description, director, release_year, genre, price, duration } = createFilmDto;
-
-      // Check if the film already exists
       const oldFilm = await this.prisma.film.findFirst({ where: { title } });
 
       if (oldFilm) {
         return createResponse('error', 'Film already exists', null, HttpStatus.CONFLICT);
       }
+
+      const videoResult = await this.cloudinaryService.uploadImage(video[0]);
+
+      let coverImageUrl: string | null = null;
+
+      if (cover_image) {
+        // Upload the cover image to Cloudinary
+        const coverImageResult = await this.cloudinaryService.uploadImage(cover_image[0]);
+
+        coverImageUrl = coverImageResult.secure_url;
+      }
+
+      // Check if the film already exists
 
       // Save the film details and video URL in the database
       const film = await this.prisma.film.create({
@@ -105,7 +106,7 @@ export class FilmsService {
           genre,
           price,
           duration,
-          cover_image: coverImageUrl,
+          cover_image_url: coverImageUrl,
           video_url: videoResult.secure_url,
         },
       });
@@ -124,7 +125,7 @@ export class FilmsService {
   async update(
     id: string,
     updateFilmDto: UpdateFilmDto,
-    file?: Express.Multer.File,
+    video?: Express.Multer.File,
     cover_image?: Express.Multer.File,
   ) {
     try {
@@ -135,27 +136,28 @@ export class FilmsService {
       }
 
       let video_url = existingFilm.video_url;
-      let cover_image_url = existingFilm.cover_image;
+      let cover_image_url = existingFilm.cover_image_url;
 
-      if (file) {
+      if (video) {
         // Delete the old video from Cloudinary
         const oldVideoPublicId = this.extractPublicId(existingFilm.video_url);
         await this.cloudinaryService.deleteImage(oldVideoPublicId);
 
         // Upload the new video to Cloudinary
-        const videoResult = await this.cloudinaryService.uploadImage(file);
+        const videoResult = await this.cloudinaryService.uploadImage(video[0]);
         video_url = videoResult.secure_url;
       }
 
       if (cover_image) {
         // Delete the old cover image from Cloudinary
-        if (existingFilm.cover_image) {
-          const oldCoverImagePublicId = this.extractPublicId(existingFilm.cover_image);
+        if (existingFilm.cover_image_url) {
+          const oldCoverImagePublicId = this.extractPublicId(existingFilm.cover_image_url);
           await this.cloudinaryService.deleteImage(oldCoverImagePublicId);
         }
 
         // Upload the new cover image to Cloudinary
-        const coverImageResult = await this.cloudinaryService.uploadImage(cover_image);
+        const coverImageResult = await this.cloudinaryService.uploadImage(cover_image[0]);
+
         cover_image_url = coverImageResult.secure_url;
       }
 
@@ -164,7 +166,7 @@ export class FilmsService {
         data: {
           ...updateFilmDto,
           video_url,
-          cover_image: cover_image_url,
+          cover_image_url: cover_image_url,
         },
       });
 

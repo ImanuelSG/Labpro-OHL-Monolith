@@ -1,14 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNumber,
-  IsString,
-  IsArray,
-  IsOptional,
-  IsNotEmpty,
-  IsPositive,
-  IsInt,
-  Max,
-} from 'class-validator';
+import { IsNumber, IsString, IsArray, IsNotEmpty, IsPositive, IsInt, Max } from 'class-validator';
 
 export class CreateFilmDto {
   @ApiProperty({
@@ -71,21 +62,4 @@ export class CreateFilmDto {
   @IsPositive({ message: 'Duration must be a positive number' })
   @IsInt({ message: 'Duration must be an integer' })
   duration: number;
-
-  @ApiProperty({
-    description: 'Video file of the film',
-    type: 'string',
-    format: 'binary',
-  })
-  @IsOptional()
-  video?: any;
-
-  @ApiProperty({
-    description: 'Cover image of the film',
-    type: 'string',
-    format: 'binary',
-    required: false,
-  })
-  @IsOptional()
-  cover_image?: any | null;
 }

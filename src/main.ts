@@ -4,8 +4,8 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 import * as hbs from 'hbs';
 import { mergeClasses } from './views/partials/helpers/mergeClasses';
-import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,13 +15,15 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: 'https://labpro-fe.hmif.dev', // Replace with your frontend origin
+    origin: ['http://localhost:5173', 'https://labpro-fe.hmif.dev'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
 
   // Validation
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true } }),
+  );
 
   // Handlebars
   hbs.registerPartials(join(__dirname, '../..', '/src/views/partials'));

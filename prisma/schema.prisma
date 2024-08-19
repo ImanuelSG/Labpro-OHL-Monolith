@@ -14,18 +14,18 @@ datasource db {
 }
 
 model Film {
-  id           String   @id @default(cuid())
-  title        String   @unique
-  description  String
-  director     String
-  release_year Int
-  genre        String[]
-  price        Int      @default(0)
-  duration     Int
-  cover_image  String?
-  video_url    String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String   @id @default(cuid())
+  title           String   @unique
+  description     String
+  director        String
+  release_year    Int
+  genre           String[]
+  price           Int      @default(0)
+  duration        Int
+  cover_image_url String?
+  video_url       String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
 
   Transactions Transaction[]
   Reviews      Review[]
@@ -49,7 +49,6 @@ model User {
   TransactionsBought Transaction[]
   Reviews            Review[]
   Wishlist           Wishlist[]
-  AccessToken        AccessToken?
 }
 
 model Transaction {
@@ -77,13 +76,4 @@ model Wishlist {
   userEmail String
   User      User   @relation(fields: [userEmail], references: [email])
   Film      Film   @relation(fields: [filmId], references: [id])
-}
-
-model AccessToken {
-  id        String   @id @default(cuid())
-  token     String
-  userEmail String   @unique
-  User      User     @relation(fields: [userEmail], references: [email])
-  createdAt DateTime @default(now())
-  expiresAt DateTime
 }
