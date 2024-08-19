@@ -20,55 +20,63 @@ model Film {
   director     String
   release_year Int
   genre        String[]
-  price        Int
+  price        Int      @default(0)
   duration     Int
   cover_image  String?
   video_url    String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  Tickets  Ticket[]
-  Reviews  Review[]
-  Wishlist Wishlist[]
+  Transactions Transaction[]
+  Reviews      Review[]
+  Wishlist     Wishlist[]
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model User {
-  email          String       @id @unique
-  username       String       @unique
-  hashedPassword String
-  fullName       String
-  balance        Int
-  TicketsBought  Ticket[]
-  Reviews        Review[]
-  Wishlist       Wishlist[]
-  AccessToken    AccessToken?
+  id                 String        @id @default(cuid())
+  email              String        @unique
+  username           String        @unique
+  hashedPassword     String
+  firstName          String
+  lastName           String
+  balance            Int           @default(0)
+  role               Role          @default(USER)
+  TransactionsBought Transaction[]
+  Reviews            Review[]
+  Wishlist           Wishlist[]
+  AccessToken        AccessToken?
 }
 
-model Ticket {
+model Transaction {
   id        String   @id @default(cuid())
-  filmTitle String
+  filmId    String
   userEmail String
   boughtAt  DateTime
   User      User     @relation(fields: [userEmail], references: [email])
-  Film      Film     @relation(fields: [filmTitle], references: [title])
+  Film      Film     @relation(fields: [filmId], references: [id])
 }
 
 model Review {
   id        String @id @default(cuid())
-  filmTitle String
+  filmId    String
   userEmail String
   Review    String
   Rating    Int
   User      User   @relation(fields: [userEmail], references: [email])
-  Film      Film   @relation(fields: [filmTitle], references: [title])
+  Film      Film   @relation(fields: [filmId], references: [id])
 }
 
 model Wishlist {
   id        String @id @default(cuid())
-  filmTitle String
+  filmId    String
   userEmail String
   User      User   @relation(fields: [userEmail], references: [email])
-  Film      Film   @relation(fields: [filmTitle], references: [title])
+  Film      Film   @relation(fields: [filmId], references: [id])
 }
 
 model AccessToken {
@@ -76,6 +84,6 @@ model AccessToken {
   token     String
   userEmail String   @unique
   User      User     @relation(fields: [userEmail], references: [email])
-  createdAt DateTime
+  createdAt DateTime @default(now())
   expiresAt DateTime
 }

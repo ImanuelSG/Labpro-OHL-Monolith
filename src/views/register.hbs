@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Your Account</title>
+    <link href="/css/main.css" rel="stylesheet" />
+    <script defer src="/ts/register.ts"></script>
+  </head>
+  <body class="flex justify-center items-center min-h-screen">
+    <div class="w-full max-w-lg p-10 rounded-lg shadow-md bg-mainblack">
+      {{> typography/title
+        className="text-center text-primary p-10"
+        content="Register Your Account"
+      }}
+
+      <form id="loginForm" action="/register" method="POST">
+        {{> input id="email" label="Email" name="email" type="text" placeholder="Enter your email"}}
+        {{> input id="username" label="Username" name="username" type="text" placeholder="Enter your username"}}
+        {{> input
+          id="password"
+          label="Password"
+          name="password"
+          type="password"
+          placeholder="Enter your password"
+        }}
+        {{> input
+          id="firstName"
+          label="First Name"
+          name="firstName"
+          type="text"
+          placeholder="Enter your first name"
+        }}
+        {{> input
+          id="lastName"
+          label="Last Name"
+          name="lastName"
+          type="text"
+          placeholder="Enter your last name"
+        }}
+        <div class="flex items-center justify-between">
+          {{> buttons/default
+            id="registerButton"
+            type="submit"
+            onClick="registerUser()"
+            content="Register"
+          }}
+        </div>
+
+        <section class="text-center mt-6">
+          {{> typography/body
+            className="text-mainwhite"
+            content="Already have an account?"
+          }}
+          <a class="text-primary hover:text-primary-dark" href="/login">Login </a>
+        </section>
+      </form>
+    </div>
+  </body>
+</html>
