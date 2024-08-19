@@ -1,6 +1,6 @@
 <button
   id="{{ id }}"
-  class="bg-primary text-main-white cursor-pointer font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+  class="{{mergeClasses 'bg-primary text-mainwhite cursor-pointer font-bold py-2 px-4 rounded focus:outline-none focus:shadow- hover:bg-opacity-80 transition-colors duration-300' className}}"
   type="{{ type }}"
   onclick="{{ onClick }}"
 >

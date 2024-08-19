@@ -8,12 +8,12 @@ import {
   Put,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { FilmsService } from './films.service';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { createResponse } from 'src/common/response.util';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('films')
@@ -47,46 +47,30 @@ export class FilmsController {
     @UploadedFile() file: Express.Multer.File,
     @UploadedFile() cover_image?: Express.Multer.File,
   ) {
-    try {
-      return await this.filmsService.create(createFilmDto, file, cover_image);
-    } catch (error) {
-      return createResponse('error', 'Internal Server Error', null);
-    }
+    return await this.filmsService.create(createFilmDto, file, cover_image);
   }
 
   @Get()
-  async findAll() {
-    try {
-      return await this.filmsService.findAll();
-    } catch (error) {
-      return { error: 'Failed to retrieve films' };
-    }
+  async findAll(@Query('q') query?: string) {
+    const result = await this.filmsService.findAll(query);
+    return result;
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    try {
-      return await this.filmsService.findOne(id);
-    } catch (error) {
-      return { error: 'Failed to retrieve film' };
-    }
+    const result = await this.filmsService.findOne(id);
+    return result;
   }
 
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateFilmDto: UpdateFilmDto) {
-    try {
-      return await this.filmsService.update(id, updateFilmDto);
-    } catch (error) {
-      return { error: 'Failed to update film' };
-    }
+    const result = await this.filmsService.update(id, updateFilmDto);
+    return result;
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    try {
-      return await this.filmsService.remove(id);
-    } catch (error) {
-      return { error: 'Failed to delete film' };
-    }
+    const result = await this.filmsService.remove(id);
+    return result;
   }
 }

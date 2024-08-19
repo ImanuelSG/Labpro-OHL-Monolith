@@ -4,31 +4,67 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <link href="/css/main.css" rel="stylesheet" />
-    <script defer src="/js/login/login.js"></script>
+    <script defer src="/js/login.js"></script>
   </head>
-  <body class="bg-gray-100 flex justify-center items-center min-h-screen">
-    <div class="w-full max-w-lg bg-white p-20 rounded-lg shadow-md">
-      <h2 class="text-3xl font-semibold text-center mb-6 p-10">Login</h2>
+  <body
+    style="
+      background-image: url('/images/netflix-bg.jpg');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    "
+    class="font-sans flex justify-center items-center min-h-screen"
+  >
+    <div class="w-full max-w-lg p-10 rounded-lg shadow-md bg-mainblack">
+      <section class="flex flex-col items-center justify-center">
+        <img src="/images/logo.png" class="object-cover items-center" />
+
+        {{> typography/title
+        className="text-center text-primary p-6"
+        content="Login to Your Account"
+        }}
+      </section>
       <form id="loginForm" action="/login" method="POST">
-        {{> input id="username" label="Username or Email" name="username" type="text" placeholder="Enter your username or email"}}
-        {{> input id="password" label="Password" name="password" type="password" placeholder="Enter your password"}}
-        <div class="flex items-center justify-between">
-          <button
+        {{> input
+          id="username"
+          label="Username or Email"
+          name="username"
+          type="text"
+          placeholder="Enter your username or email"
+        }}
+        {{> input
+          id="password"
+          label="Password"
+          name="password"
+          type="password"
+          placeholder="Enter your password"
+        }}
+        <div class="flex items-center justify-end">
+          {{> buttons/default
             id="loginButton"
-            class="bg-green-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
-            onclick="handleLogin()"
-          >
-            Sign In
-          </button>
-          <a
-            class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-            href="/register"
-          >
-            Create an account
-          </a>
+            onClick="handleLogin()"
+            content="Login"
+            className="w-full mt-5"
+          }}
         </div>
+        <section class="text-center mt-6">
+          {{> typography/body
+            className="text-mainwhite"
+            content="Don't have an account?"
+          }}
+          <a
+            class="text-primary hover:underline hover:text-mainwhite transition-colors duration-300"
+            href="/register"
+            >Register</a
+          >
+        </section>
       </form>
     </div>
   </body>

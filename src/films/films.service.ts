@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { createResponse } from 'src/common/response.util';
+import { type Film } from '@prisma/client';
 
 @Injectable()
 export class FilmsService {
@@ -12,12 +13,40 @@ export class FilmsService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async findAll() {
+  async findAll(query?: string) {
     try {
-      const films = await this.prisma.film.findMany();
+      let films: Film[];
+      if (!query) {
+        films = await this.prisma.film.findMany();
+      } else {
+        films = await this.prisma.film.findMany({
+          where: {
+            OR: [
+              {
+                title: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                director: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              },
+            ],
+          },
+        });
+      }
+
       return createResponse('success', 'Films retrieved successfully', films);
     } catch (error) {
-      return createResponse('error', 'Failed to retrieve films', null);
+      return createResponse(
+        'error',
+        error.message || 'Failed to retrieve films',
+        null,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -26,12 +55,17 @@ export class FilmsService {
       const film = await this.prisma.film.findUnique({ where: { id } });
 
       if (!film) {
-        return createResponse('error', 'Film not found', null);
+        return createResponse('error', 'Film not found', null, HttpStatus.NOT_FOUND);
       }
 
       return createResponse('success', 'Film retrieved successfully', film);
     } catch (error) {
-      return createResponse('error', 'Failed to retrieve film', null);
+      return createResponse(
+        'error',
+        error.message || 'Failed to retrieve film',
+        null,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -58,7 +92,7 @@ export class FilmsService {
       const oldFilm = await this.prisma.film.findFirst({ where: { title } });
 
       if (oldFilm) {
-        return createResponse('error', 'Film already exists', null);
+        return createResponse('error', 'Film already exists', null, HttpStatus.CONFLICT);
       }
 
       // Save the film details and video URL in the database
@@ -78,7 +112,12 @@ export class FilmsService {
 
       return createResponse('success', 'Film created successfully', film);
     } catch (error) {
-      return createResponse('error', 'Failed to create film', null);
+      return createResponse(
+        'error',
+        error.message || 'Failed to create film',
+        null,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -92,7 +131,7 @@ export class FilmsService {
       const existingFilm = await this.prisma.film.findUnique({ where: { id } });
 
       if (!existingFilm) {
-        return createResponse('error', 'Film not found', null);
+        return createResponse('error', 'Film not found', null, HttpStatus.NOT_FOUND);
       }
 
       let video_url = existingFilm.video_url;
@@ -131,7 +170,12 @@ export class FilmsService {
 
       return createResponse('success', 'Film updated successfully', film);
     } catch (error) {
-      return createResponse('error', 'Failed to update film', null);
+      return createResponse(
+        'error',
+        error.message || 'Failed to update film',
+        null,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -140,7 +184,7 @@ export class FilmsService {
       const existingFilm = await this.prisma.film.findUnique({ where: { id } });
 
       if (!existingFilm) {
-        throw new NotFoundException('Film not found');
+        return createResponse('error', 'Film not Found', null, HttpStatus.NOT_FOUND);
       }
 
       // Delete the video from Cloudinary
@@ -152,7 +196,12 @@ export class FilmsService {
 
       return createResponse('success', 'Film deleted successfully', film);
     } catch (error) {
-      throw new Error('Failed to delete film');
+      return createResponse(
+        'error',
+        error.message || 'Failed to delete film',
+        null,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 

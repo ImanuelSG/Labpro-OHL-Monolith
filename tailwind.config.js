@@ -25,6 +25,9 @@ module.exports = {
           foreground: '#757575',
         },
       },
+      fontFamily: {
+        sans: ['Poppins', 'sans'],
+      },
     },
   },
   plugins: [],

@@ -17,4 +17,10 @@ export class AppController {
   getRegisterPage() {
     return {};
   }
+
+  @Get('/login')
+  @Render('login')
+  getLoginPage() {
+    return {};
+  }
 }

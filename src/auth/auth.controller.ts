@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/guard/jwt-auth-guard';
 @ApiTags('auth')
 @Controller()
 export class AuthController {
@@ -9,12 +10,15 @@ export class AuthController {
 
   @Post('/login')
   async login(@Body() createAuthDto: LoginDto) {
-    return this.authService.Login(createAuthDto);
+    return this.authService.login(createAuthDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/self')
-  async findSelf() {
-    return this.authService.getSelf();
+  async findSelf(@Req() req) {
+    const userId = req.user.sub;
+    const token = req.headers.authorization.split(' ')[1];
+    return this.authService.getSelf(userId, token);
   }
 
   @Post('/logout') async logout() {

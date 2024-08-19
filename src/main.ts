@@ -13,8 +13,15 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '../..', 'public'));
   app.setBaseViewsDir(join(__dirname, '../..', '/src/views'));
 
+  // Enable CORS
+  app.enableCors({
+    origin: 'https://labpro-fe.hmif.dev', // Replace with your frontend origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
   // Validation
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   // Handlebars
   hbs.registerPartials(join(__dirname, '../..', '/src/views/partials'));
@@ -23,7 +30,7 @@ async function bootstrap() {
 
   // Swagger
   const config = new DocumentBuilder()
-    .setTitle('Proflix API DOcumentation')
+    .setTitle('Proflix API Documentation')
     .setDescription('API documentation for Proflix Monolith')
     .setVersion('1.0')
     .addBearerAuth()

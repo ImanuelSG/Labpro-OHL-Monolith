@@ -4,17 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register Your Account</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <link href="/css/main.css" rel="stylesheet" />
-    <script defer src="/ts/register.ts"></script>
+    <script defer src="/js/register.js"></script>
   </head>
-  <body class="flex justify-center items-center min-h-screen">
+  <body
+    style="
+      background-image: url('/images/netflix-bg.jpg');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    "
+    class="font-sans flex justify-center items-center min-h-screen"
+  >
     <div class="w-full max-w-lg p-10 rounded-lg shadow-md bg-mainblack">
-      {{> typography/title
-        className="text-center text-primary p-10"
-        content="Register Your Account"
-      }}
+      <section class="flex flex-col items-center justify-center">
+        <img src="/images/logo.png" class="object-cover items-center" />
 
-      <form id="loginForm" action="/register" method="POST">
+        {{> typography/title
+        className="text-center text-primary p-6"
+        content="Register Your Account"
+        }}
+      </section>
+
+      <form id="loginForm">
         {{> input id="email" label="Email" name="email" type="text" placeholder="Enter your email"}}
         {{> input id="username" label="Username" name="username" type="text" placeholder="Enter your username"}}
         {{> input
@@ -38,12 +55,13 @@
           type="text"
           placeholder="Enter your last name"
         }}
-        <div class="flex items-center justify-between">
+        <div class="flex items-center w-full">
           {{> buttons/default
             id="registerButton"
-            type="submit"
+            type="button"
             onClick="registerUser()"
             content="Register"
+            className="w-full mt-5"
           }}
         </div>
 
@@ -52,8 +70,21 @@
             className="text-mainwhite"
             content="Already have an account?"
           }}
-          <a class="text-primary hover:text-primary-dark" href="/login">Login </a>
+          <a class="text-primary hover:text-mainwhite transition-colors duration-300" href="/login"
+            >Login
+          </a>
         </section>
+        <div
+          id="loadingSpinner"
+          class="hidden fixed inset-0 items-center justify-center bg-black bg-opacity-50 z-50"
+        >
+          <section
+            class="flex flex-col gap-2 items-center justify-center rounded-lg bg-mainblack bg-opacity-80 p-6"
+          >
+            <img src="/images/logo.png" class="object-cover items-center animate-pulse" />
+            <p class="text-mainwhite text-xl font-semibold">Loading...</p>
+          </section>
+        </div>
       </form>
     </div>
   </body>

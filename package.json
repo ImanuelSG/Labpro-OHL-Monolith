@@ -12,7 +12,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "build:css": "npx tailwindcss -i ./src/styles/tailwind.css -o ./public/css/main.css",
+    "build:css": "npx tailwindcss -i ./public/css/tailwind.css -o ./public/css/main.css --minify",
     "watch:css": "npx tailwindcss -i ./public/css/tailwind.css -o ./public/css/main.css --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
