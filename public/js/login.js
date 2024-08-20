@@ -22,7 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // Check if the response is not successful
+
       const data = await response.json();
+      console.log(data);
+
       if (data.status === 'error') {
         alert(`Error: ${data.message || 'Login failed'}`);
         return;

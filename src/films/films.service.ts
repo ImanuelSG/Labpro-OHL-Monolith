@@ -4,7 +4,7 @@ import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { createResponse } from 'src/common/response.util';
-import { type Film } from '@prisma/client';
+import { Film } from '@prisma/client';
 
 @Injectable()
 export class FilmsService {
@@ -15,11 +15,15 @@ export class FilmsService {
 
   async findAll(query?: string) {
     try {
-      let films: Film[];
+      let films: Omit<Film, 'rating' | 'ratingCount'>[];
       if (!query) {
         films = await this.prisma.film.findMany();
       } else {
         films = await this.prisma.film.findMany({
+          omit: {
+            rating: true,
+            ratingCount: true,
+          },
           where: {
             OR: [
               {

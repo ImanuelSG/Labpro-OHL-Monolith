@@ -9,15 +9,18 @@ import {
   UseInterceptors,
   Query,
   UploadedFiles,
+  UseGuards,
 } from '@nestjs/common';
 import { FilmsService } from './films.service';
 import { CreateFilmDto } from './dto/create-film.dto';
 import { UpdateFilmDto } from './dto/update-film.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { AdminGuard } from 'src/guard/admin-auth-guard';
 
 @ApiTags('films')
 @Controller('films')
+@UseGuards(AdminGuard)
 export class FilmsController {
   constructor(private readonly filmsService: FilmsService) {}
 

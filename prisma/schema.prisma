@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -22,6 +23,8 @@ model Film {
   genre           String[]
   price           Int      @default(0)
   duration        Int
+  ratingCount     Int      @default(0)
+  rating          Float    @default(0)
   cover_image_url String?
   video_url       String
   created_at      DateTime @default(now())
@@ -38,14 +41,15 @@ enum Role {
 }
 
 model User {
-  id                 String        @id @default(cuid())
-  email              String        @unique
-  username           String        @unique
-  hashedPassword     String
-  firstName          String
-  lastName           String
-  balance            Int           @default(0)
-  role               Role          @default(USER)
+  id             String @id @default(cuid())
+  email          String @unique
+  username       String @unique
+  hashedPassword String
+  firstName      String
+  lastName       String
+  balance        Int    @default(0)
+  role           Role   @default(USER)
+
   TransactionsBought Transaction[]
   Reviews            Review[]
   Wishlist           Wishlist[]
@@ -56,24 +60,24 @@ model Transaction {
   filmId    String
   userEmail String
   boughtAt  DateTime
-  User      User     @relation(fields: [userEmail], references: [email])
-  Film      Film     @relation(fields: [filmId], references: [id])
+  User      User     @relation(fields: [userEmail], references: [email], onDelete: Cascade)
+  Film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade)
 }
 
 model Review {
-  id        String @id @default(cuid())
-  filmId    String
-  userEmail String
-  Review    String
-  Rating    Int
-  User      User   @relation(fields: [userEmail], references: [email])
-  Film      Film   @relation(fields: [filmId], references: [id])
+  id       String @id @default(cuid())
+  filmId   String
+  username String
+  Review   String
+  Rating   Int
+  User     User   @relation(fields: [username], references: [username], onDelete: Cascade)
+  Film     Film   @relation(fields: [filmId], references: [id], onDelete: Cascade)
 }
 
 model Wishlist {
-  id        String @id @default(cuid())
-  filmId    String
-  userEmail String
-  User      User   @relation(fields: [userEmail], references: [email])
-  Film      Film   @relation(fields: [filmId], references: [id])
+  id     String @id @default(cuid())
+  filmId String
+  userId String
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Film   Film   @relation(fields: [filmId], references: [id], onDelete: Cascade)
 }
