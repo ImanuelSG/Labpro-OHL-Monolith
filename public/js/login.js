@@ -4,6 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Get the form element
     const form = document.getElementById('loginForm');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    // Show loading spinner and disable the button
+    loadingSpinner.classList.remove('hidden');
+    loadingSpinner.classList.add('flex');
+    const loginButton = document.getElementById('loginButton');
+    loginButton.disabled = true;
 
     // Create an object with the form data
     const formData = {
@@ -13,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       // Send a POST request to the /login endpoint
-      const response = await fetch('/login', {
+      const response = await fetch('/web-auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -24,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // Check if the response is not successful
 
       const data = await response.json();
-      console.log(data);
 
       if (data.status === 'error') {
         alert(`Error: ${data.message || 'Login failed'}`);
@@ -33,10 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Handle success (you might want to redirect the user or show a success message)
       alert('Login successful!');
-      // window.location.href = '/'; // Redirect to / after successful login
+      window.location.href = '/'; // Redirect to / after successful login
     } catch (error) {
       // Handle any network errors
       alert(`An error occurred: ${error.message}`);
+    } finally {
+      // Enable button and hide spinner
+      loadingSpinner.classList.remove('flex');
+      loadingSpinner.classList.add('hidden');
+      loginButton.disabled = false;
     }
   }
 

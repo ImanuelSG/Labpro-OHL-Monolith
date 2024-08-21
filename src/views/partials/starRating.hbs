@@ -1,0 +1,36 @@
+<div class="flex items-center relative">
+  {{#each (range 0 5)}}
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-6 w-6 
+      {{#if (isPartialStar this ../rating)}}text-mainwhite 
+      {{else if (lt this ../rating)}}text-[#FFD700]
+      {{else}}text-mainwhite{{/if}}"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+  >
+    <path
+      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.82a1 1 0 00.95.69h5.104c.969 0 1.371 1.24.588 1.81l-4.13 2.996a1 1 0 00-.364 1.118l1.563 4.82c.3.921-.755 1.688-1.538 1.118l-4.131-2.996a1 1 0 00-1.175 0l-4.131 2.996c-.783.57-1.838-.197-1.538-1.118l1.563-4.82a1 1 0 00-.364-1.118l-4.13-2.996c-.783-.57-.38-1.81.588-1.81h5.104a1 1 0 00.95-.69l1.562-4.82z"
+    />
+  </svg>
+  {{#if (isPartialStar this ../rating)}}
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-6 w-6 absolute text-[#FFD700] z-10"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    style="left: {{multiply this 20}}%;"
+  >
+    <defs>
+      <clipPath id="star-clip-{{ this }}">
+        <rect x="0" y="0" width="{{mulSub ../rating this 100}}%" height="100%" />
+      </clipPath>
+    </defs>
+    <path
+      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.82a1 1 0 00.95.69h5.104c.969 0 1.371 1.24.588 1.81l-4.13 2.996a1 1 0 00-.364 1.118l1.563 4.82c.3.921-.755 1.688-1.538 1.118l-4.131-2.996a1 1 0 00-1.175 0l-4.131 2.996c-.783.57-1.838-.197-1.538-1.118l1.563-4.82a1 1 0 00-.364-1.118l-4.13-2.996c-.783-.57-.38-1.81.588-1.81h5.104a1 1 0 00.95-.69l1.562-4.82z"
+      clip-path="url(#star-clip-{{ this }})"
+    />
+  </svg>
+  {{/if}}
+  {{/each}}
+</div>

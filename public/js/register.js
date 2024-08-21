@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+  function startLoading(loadingSpinner) {
+    loadingSpinner.classList.remove('hidden');
+    loadingSpinner.classList.add('flex');
+  }
+
+  function stopLoading(loadingSpinner) {
+    loadingSpinner.classList.remove('flex');
+    loadingSpinner.classList.add('hidden');
+  }
+
   async function registerUser(event) {
     event.preventDefault(); // Prevent the form from submitting the traditional way
 
@@ -8,8 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingSpinner = document.getElementById('loadingSpinner');
 
     // Show loading spinner and disable the button
-    loadingSpinner.classList.remove('hidden');
-    loadingSpinner.classList.add('flex');
+    startLoading(loadingSpinner);
     const registerButton = document.getElementById('registerButton');
     registerButton.disabled = true;
 
@@ -44,11 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = '/login'; // Redirect to login page after successful registration
     } catch (error) {
       // Handle any network errors
+
       alert(`An error occurred: ${error.message}`);
     } finally {
       // Enable button and hide spinner
-      loadingSpinner.classList.remove('flex');
-      loadingSpinner.classList.add('hidden');
+      stopLoading(loadingSpinner);
       registerButton.disabled = false;
     }
   }

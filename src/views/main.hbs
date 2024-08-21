@@ -3,89 +3,142 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to Proflix</title>
+    <title>Proflix - Films streaming platform</title>
+
+    <!-- Meta Description -->
+    <meta
+      name="description"
+      content="Become a Proflix member and enjoy unlimited access to your favorite movies and series."
+    />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Proflix Home Page" />
+    <meta
+      property="og:description"
+      content="Welcome to Proflix! The best platform to watch your favourite films."
+    />
+    <meta property="og:image" content="/images/logo.png" />
+    <meta property="og:url" content="https://labpro-production.up.railway.app" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Welcome to Proflix" />
+    <meta name="twitter:description" content="The best platform to watch your favourite films." />
+    <meta name="twitter:image" content="/images/logo.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/images/logo.png" type="image/png" />
+
+    <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
     />
+
+    <!-- CSS and JavaScript -->
     <link href="/css/main.css" rel="stylesheet" />
-    <script defer src="/js/main.js"></script>
   </head>
   <body
     style="
-      background-image: url('/images/netflix-bg.jpg');
+      background-image: url('/images/netflix-bg.webp');
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
       background-attachment: fixed;
     "
-    class="font-sans flex justify-center items-center min-h-screen"
+    class="font-sans flex flex-col justify-center items-center min-h-screen p-10"
   >
-    <div class="w-full max-w-lg p-10 rounded-lg shadow-md bg-mainblack">
-      <section class="flex flex-col items-center justify-center">
-        <img src="/images/logo.png" class="object-cover items-center" />
+    {{> navbar isAuthenticated=isAuthenticated balance=balance}}
 
+    <!-- Search Bar Section -->
+    <div class="flex flex-col gap-6 mb-5 py-20 w-1/2 min-w-[300px]">
+      <section class="flex flex-col">
         {{> typography/title
-        className="text-center text-primary p-6"
-        content="Register Your Account"
+        className="text-center text-mainwhite text-[32px] font-bold"
+        content="Welcome to Proflix !"
+        }}
+        {{> typography/title
+        className="text-center text-mainwhite font-normal "
+        content="The best platform to watch your favourite films"
         }}
       </section>
 
-      <form id="loginForm">
-        {{> input id="email" label="Email" name="email" type="text" placeholder="Enter your email"}}
-        {{> input id="username" label="Username" name="username" type="text" placeholder="Enter your username"}}
-        {{> input
-          id="password"
-          label="Password"
-          name="password"
-          type="password"
-          placeholder="Enter your password"
-        }}
-        {{> input
-          id="firstName"
-          label="First Name"
-          name="firstName"
+      <form action="/" method="GET" class="flex justify-center">
+        <input
           type="text"
-          placeholder="Enter your first name"
-        }}
-        {{> input
-          id="lastName"
-          label="Last Name"
-          name="lastName"
-          type="text"
-          placeholder="Enter your last name"
-        }}
-        <div class="flex items-center w-full">
-          {{> buttons/default
-            id="registerButton"
-            type="button"
-            onClick="registerUser()"
-            content="Register"
-            className="w-full mt-5"
-          }}
-        </div>
-
-        <section class="text-center mt-6">
-          {{> typography/body
-            className="text-mainwhite"
-            content="Already have an account?"
-          }}
-          <a class="text-primary hover:text-mainwhite transition-colors duration-300" href="/login"
-            >Login
-          </a>
-        </section>
-        <div
-          id="loadingSpinner"
-          class="hidden fixed inset-0 items-center justify-center bg-black bg-opacity-50 z-50"
-        >
-          <section
-            class="flex flex-col gap-2 items-center justify-center rounded-lg bg-mainblack bg-opacity-80 p-6"
+          name="q"
+          placeholder="Search films..."
+          value="{{ query }}"
+          class="p-2 border rounded-l-lg w-full"
+        />
+        <button type="submit" class="bg-primary text-mainwhite p-2 rounded-r-lg hover:opacity-80">
+          <svg
+            class="w-6 h-6"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            viewBox="0 0 50 50"
+            width="500px"
+            height="500px"
+            fill="currentColor"
           >
-            <img src="/images/logo.png" class="object-cover items-center animate-pulse" />
-            <p class="text-mainwhite text-xl font-semibold">Loading...</p>
-          </section>
-        </div>
+            <path
+              d="M21,3C11.6,3,4,10.6,4,20s7.6,17,17,17s17-7.6,17-17S30.4,3,21,3z M21,33c-7.2,0-13-5.8-13-13c0-7.2,5.8-13,13-13c7.2,0,13,5.8,13,13C34,27.2,28.2,33,21,33z"
+            />
+            <line
+              fill="none"
+              stroke="#FFFFFF"
+              stroke-width="6"
+              stroke-miterlimit="10"
+              x1="31.2"
+              y1="31.2"
+              x2="44.5"
+              y2="44.5"
+            />
+          </svg>
+        </button>
       </form>
+    </div>
+
+    <!-- Movies Grid Section -->
+    {{#if films.length}}
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1280px]">
+      {{#each films}}
+      {{> movieCard this}}
+      {{/each}}
+    </section>
+    {{else}}
+    <h1 class="text-[26px] text-mainwhite">No films match your query</h1>
+    {{/if}}
+
+    <!-- Pagination Section -->
+    <div class="flex justify-center space-x-2 mt-10">
+      {{!-- Show "Prev" button if not on the first page --}}
+      {{#if (gt page 1)}}
+      <a
+        href="?q={{ query }}&page={{subtract page 1}}"
+        class="bg-primary text-mainwhite px-4 py-2 rounded-lg hover:bg-opacity-80 transition-opacity duration-500"
+        >Prev</a
+      >
+      {{/if}}
+
+      {{!-- Loop through all pages --}}
+      {{#each (range 1 (add totalPages 1))}}
+      <a
+        href="?q={{ query }}&page={{ this }}"
+        class="text-mainwhite px-4 py-2 rounded-lg hover:bg-opacity-80 transition-opacity duration-500 {{#if (eq this ../page)}}bg-mainblack{{else}}bg-primary{{/if}}"
+        >{{ this }}</a
+      >
+      {{/each}}
+
+      {{!-- Show "Next" button if not on the last page --}}
+      {{#if (lt page totalPages)}}
+      <a
+        href="?q={{ query }}&page={{add page 1}}"
+        class="bg-primary text-mainwhite px-4 py-2 rounded-lg hover:bg-opacity-80 transition-opacity duration-500"
+        >Next</a
+      >
+      {{/if}}
     </div>
   </body>
 </html>

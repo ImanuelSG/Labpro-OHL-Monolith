@@ -1,45 +1,87 @@
-<nav class="bg-gray-800 p-4">
-  <div class="container mx-auto flex justify-between items-center">
+<nav class="bg-mainblack py-4 px-10 h-20 w-full absolute top-0 z-50">
+  <div class="w-full flex justify-start items-center">
     <!-- Logo -->
-    <a href="/" class="text-white font-bold text-lg">MyLogo</a>
+    <a href="/">
+      <img src="/images/logo.png" class="object-cover items-center w-[152px] h[50px]" />
+    </a>
 
     <!-- Links -->
-    <div class="hidden md:flex space-x-4">
-      {{#each links}}
-      <a
-        href="{{ this.path }}"
-        class="text-white {{#if (eq this.path currentPath)}}text-blue-500{{/if}}"
-        >{{ this.name }}</a
-      >
-      {{/each}}
+    <div class="hidden md:flex space-x-12 ml-auto items-center">
+      {{#if isAuthenticated}}
+      <a href="/bought-films" class="text-mainwhite">Bought Films</a>
+      <a href="/wishlist" class="text-mainwhite">WishList</a>
+      <a href="#" onclick="handleLogout()" class="text-mainwhite">Logout</a>
+      <span class="text-mainwhite">Balance: Rp.{{ balance }}</span>
+      {{else}}
+      <a href="/login" class="text-mainwhite">Login</a>
+      <a href="/register" class="text-mainwhite">Register</a>
+      {{/if}}
     </div>
 
-    <button id="menu-toggle" class="block md:hidden text-white">
+    <!-- Hamburger Icon -->
+    <button id="menu-toggle" class="block md:hidden text-mainwhite ml-auto">
       <svg
-        class="h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
+        height="32px"
+        id="Layer_1"
+        style="enable-background: new 0 0 32 32"
+        version="1.1"
+        viewBox="0 0 32 32"
+        width="32px"
+        xml:space="preserve"
         xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        fill="#ffffff"
       >
         <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M4 6h16M4 12h16m-7 6h7"
-        ></path>
+          d="M4,10h24c1.104,0,2-0.896,2-2s-0.896-2-2-2H4C2.896,6,2,6.896,2,8S2.896,10,4,10z M28,14H4c-1.104,0-2,0.896-2,2  s0.896,2,2,2h24c1.104,0,2-0.896,2-2S29.104,14,28,14z M28,22H4c-1.104,0-2,0.896-2,2s0.896,2,2,2h24c1.104,0,2-0.896,2-2  S29.104,22,28,22z"
+        />
       </svg>
     </button>
   </div>
 
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" class="md:hidden flex flex-col space-y-2 mt-4">
-    {{#each links}}
-    <a
-      href="{{ this.path }}"
-      class="text-white block {{#if (eq this.path currentPath)}}text-blue-500{{/if}}"
-      >{{ this.name }}</a
-    >
-    {{/each}}
+  <!-- Mobile Menu Popover -->
+  <div
+    id="mobile-menu"
+    class="hidden flex-col space-y-2 bg-blackred p-4 absolute top-20 left-0 w-full rounded-b-lg"
+  >
+    {{#if isAuthenticated}}
+    <a href="/bought-films" class="text-mainwhite">Bought Films</a>
+    <a href="/wishlist" class="text-mainwhite">WishList</a>
+    <a href="#" onclick="handleLogout()" class="text-mainwhite">Logout</a>
+    <span class="text-mainwhite">Balance: Rp.{{ balance }}</span>
+    {{else}}
+    <a href="/login" class="text-mainwhite">Login</a>
+    <a href="/register" class="text-mainwhite">Register</a>
+    {{/if}}
   </div>
 </nav>
+
+<script>
+  // JavaScript to toggle the mobile menu
+  document.getElementById('menu-toggle').addEventListener('click', function () {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('hidden');
+    menu.classList.toggle('flex');
+  });
+
+  async function handleLogout() {
+    try {
+      const res = await fetch('/web-auth/logout', {
+        method: 'POST',
+      });
+
+      const data = await res.json();
+
+      if (data.status === 'success') {
+        window.location.href = '/login';
+      } else {
+        alert('Failed to logout : ' + data.message);
+        location.reload();
+      }
+    } catch (error) {
+      console.error('Failed to logout : ', error);
+      alert('Failed to logout : ' + error.message);
+      location.reload();
+    }
+  }
+</script>

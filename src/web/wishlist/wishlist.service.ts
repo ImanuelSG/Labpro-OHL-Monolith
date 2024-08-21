@@ -7,29 +7,37 @@ export class WishlistService {
   constructor(private prisma: PrismaService) {}
   async create(filmId: string, userId: string) {
     try {
-      const oldWistlist = await this.prisma.wishlist.findFirst({
+      const existingWishlist = await this.prisma.wishlist.findUnique({
         where: {
-          filmId: filmId,
-          userId: userId,
+          filmId_userId: {
+            filmId: filmId,
+            userId: userId,
+          },
         },
       });
 
-      if (oldWistlist) {
-        return createResponse('error', 'Film already in wishlist', null, HttpStatus.FORBIDDEN);
+      if (existingWishlist) {
+        // Remove from wishlist if it already exists
+        await this.prisma.wishlist.delete({
+          where: {
+            id: existingWishlist.id,
+          },
+        });
+        return createResponse('success', 'Film removed from wishlist', null);
+      } else {
+        // Add to wishlist if it doesn't exist
+        const newWishlist = await this.prisma.wishlist.create({
+          data: {
+            filmId: filmId,
+            userId: userId,
+          },
+        });
+        return createResponse('success', 'Film added to wishlist', newWishlist);
       }
-
-      const wishlist = await this.prisma.wishlist.create({
-        data: {
-          filmId: filmId,
-          userId: userId,
-        },
-      });
-
-      return createResponse('success', 'Film added to wishlist', wishlist);
     } catch (error) {
       return createResponse(
         'error',
-        error.message || 'Failed to add film to wishlist',
+        error.message || 'Failed to update wishlist',
         null,
         error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -49,35 +57,6 @@ export class WishlistService {
       return createResponse(
         'error',
         error.message || 'Failed to retrieve wishlist',
-        null,
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  async remove(id: string) {
-    try {
-      const wishlist = await this.prisma.wishlist.findUnique({
-        where: {
-          id: id,
-        },
-      });
-
-      if (!wishlist) {
-        return createResponse('error', 'Film not found in wishlist', null, HttpStatus.NOT_FOUND);
-      }
-
-      await this.prisma.wishlist.delete({
-        where: {
-          id: id,
-        },
-      });
-
-      return createResponse('success', 'Film removed from wishlist', null);
-    } catch (error) {
-      return createResponse(
-        'error',
-        error.message || 'Failed to remove film from wishlist',
         null,
         error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );

@@ -12,6 +12,10 @@ module.exports = {
           DEFAULT: '#B81D24',
           foreground: '#221F1F',
         },
+        blackred: {
+          DEFAULT: '#3e0000',
+          foreground: '#221F1F',
+        },
         mainblack: {
           DEFAULT: '#221F1F',
           foreground: '#F5F5F1',

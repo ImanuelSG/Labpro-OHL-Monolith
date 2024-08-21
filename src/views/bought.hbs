@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proflix - Your Bought Films</title>
+
+    <!-- Meta Description -->
+    <meta
+      name="description"
+      content="Access your purchased films on Proflix anytime. Enjoy your personal movie collection at your convenience."
+    />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Proflix Bought Films" />
+    <meta
+      property="og:description"
+      content="Watch all the films you've purchased on Proflix in one place. Enjoy your collection anytime, anywhere."
+    />
+    <meta property="og:image" content="/images/logo.png" />
+    <meta property="og:url" content="https://labpro-production.up.railway.app" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Your Proflix Purchased Films" />
+    <meta
+      name="twitter:description"
+      content="Enjoy instant access to your bought films on Proflix."
+    />
+    <meta name="twitter:image" content="/images/logo.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/images/logo.png" type="image/png" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS and JavaScript -->
+    <link href="/css/main.css" rel="stylesheet" />
+  </head>
+  <body
+    style="
+      background-image: url('/images/netflix-bg.webp');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    "
+    class="font-sans flex flex-col justify-center items-center min-h-screen p-10"
+  >
+    {{> navbar isAuthenticated=isAuthenticated balance=balance}}
+
+    <!-- Search Bar Section -->
+    <div class="flex flex-col gap-6 mb-5 py-20 w-1/2 min-w-[300px]">
+      <section class="flex flex-col">
+        {{> typography/title
+        className="text-center text-mainwhite text-[32px] font-bold"
+        content="Your Purchased Films"
+        }}
+        {{> typography/title
+        className="text-center text-mainwhite font-normal"
+        content="Enjoy the films you've bought, anytime."
+        }}
+      </section>
+
+      <form action="/bought-films" method="GET" class="flex justify-center">
+        <input
+          type="text"
+          name="q"
+          placeholder="Search your films..."
+          value="{{ query }}"
+          class="p-2 border rounded-l-lg w-full"
+        />
+        <button type="submit" class="bg-primary text-mainwhite p-2 rounded-r-lg hover:opacity-80">
+          <svg
+            class="w-6 h-6"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            viewBox="0 0 50 50"
+            width="500px"
+            height="500px"
+            fill="currentColor"
+          >
+            <path
+              d="M21,3C11.6,3,4,10.6,4,20s7.6,17,17,17s17-7.6,17-17S30.4,3,21,3z M21,33c-7.2,0-13-5.8-13-13c0-7.2,5.8-13,13-13c7.2,0,13,5.8,13,13C34,27.2,28.2,33,21,33z"
+            />
+            <line
+              fill="none"
+              stroke="#FFFFFF"
+              stroke-width="6"
+              stroke-miterlimit="10"
+              x1="31.2"
+              y1="31.2"
+              x2="44.5"
+              y2="44.5"
+            />
+          </svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Movies Grid Section -->
+    {{#if films.length}}
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1280px]">
+      {{#each films}}
+      {{> movieCard this}}
+      {{/each}}
+    </section>
+    {{else}}
+    <h1 class="text-[26px] text-mainwhite">No films found in your collection</h1>
+    {{/if}}
+
+    <!-- Pagination Section -->
+    <div class="flex justify-center space-x-2 mt-10">
+      {{!-- Show "Prev" button if not on the first page --}}
+      {{#if (gt page 1)}}
+      <a
+        href="?q={{ query }}&page={{subtract page 1}}"
+        class="bg-primary text-mainwhite px-4 py-2 rounded-lg hover:bg-opacity-80 transition-opacity duration-500"
+        >Prev</a
+      >
+      {{/if}}
+
+      {{!-- Loop through all pages --}}
+      {{#each (range 1 (add totalPages 1))}}
+      <a
+        href="?q={{ query }}&page={{ this }}"
+        class="text-mainwhite px-4 py-2 rounded-lg hover:bg-opacity-80 transition-opacity duration-500 {{#if (eq this ../page)}}bg-mainblack{{else}}bg-primary{{/if}}"
+        >{{ this }}</a
+      >
+      {{/each}}
+
+      {{!-- Show "Next" button if not on the last page --}}
+      {{#if (lt page totalPages)}}
+      <a
+        href="?q={{ query }}&page={{add page 1}}"
+        class="bg-primary text-mainwhite px-4 py-2 rounded-lg hover:bg-opacity-80 transition-opacity duration-500"
+        >Next</a
+      >
+      {{/if}}
+    </div>
+  </body>
+</html>

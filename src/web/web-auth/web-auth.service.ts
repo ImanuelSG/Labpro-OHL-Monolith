@@ -26,7 +26,7 @@ export class WebAuthService {
 
     try {
       const user = await this.prisma.user.findFirst({
-        where: { username },
+        where: { OR: [{ username }, { email: username }] },
       });
 
       if (!user) {
@@ -35,11 +35,11 @@ export class WebAuthService {
           .json(createResponse('error', 'No user found', null, HttpStatus.NOT_FOUND));
       }
 
-      if (user.role !== 'ADMIN') {
+      if (user.role !== 'USER') {
         return res
           .status(HttpStatus.FORBIDDEN)
           .json(
-            createResponse('error', 'Account is not an admin account', null, HttpStatus.FORBIDDEN),
+            createResponse('error', 'Account is not a user account', null, HttpStatus.FORBIDDEN),
           );
       }
 
@@ -57,7 +57,7 @@ export class WebAuthService {
 
       res.cookie('authToken', token, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
       });
 
@@ -78,15 +78,9 @@ export class WebAuthService {
     }
   }
 
-  findAll() {
-    return `This action returns all webAuth`;
-  }
+  async logout(@Res() res: Response) {
+    res.clearCookie('authToken');
 
-  findOne(id: number) {
-    return `This action returns a #${id} webAuth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} webAuth`;
+    return res.status(HttpStatus.OK).json(createResponse('success', 'Logout successful', null));
   }
 }

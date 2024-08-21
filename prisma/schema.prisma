@@ -56,22 +56,26 @@ model User {
 }
 
 model Transaction {
-  id        String   @id @default(cuid())
-  filmId    String
-  userEmail String
-  boughtAt  DateTime
-  User      User     @relation(fields: [userEmail], references: [email], onDelete: Cascade)
-  Film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  id       String   @id @default(cuid())
+  filmId   String
+  userId   String
+  boughtAt DateTime
+  User     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Film     Film     @relation(fields: [filmId], references: [id], onDelete: Cascade)
+
+  @@unique([filmId, userId])
 }
 
 model Review {
   id       String @id @default(cuid())
   filmId   String
   username String
-  Review   String
-  Rating   Int
+  review   String
+  rating   Int
   User     User   @relation(fields: [username], references: [username], onDelete: Cascade)
   Film     Film   @relation(fields: [filmId], references: [id], onDelete: Cascade)
+
+  @@unique([filmId, username])
 }
 
 model Wishlist {
@@ -80,4 +84,6 @@ model Wishlist {
   userId String
   User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   Film   Film   @relation(fields: [filmId], references: [id], onDelete: Cascade)
+
+  @@unique([filmId, userId])
 }

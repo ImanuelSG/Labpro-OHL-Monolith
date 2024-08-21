@@ -161,4 +161,26 @@ export class UserService {
       );
     }
   }
+
+  async getBalance(id: string) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+        select: { balance: true },
+      });
+
+      if (!user) {
+        return createResponse('error', 'User not found', null, HttpStatus.NOT_FOUND);
+      }
+
+      return createResponse('success', 'Balance fetched', user.balance);
+    } catch (error) {
+      return createResponse(
+        'error',
+        error.message || 'Failed to fetch balance',
+        null,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

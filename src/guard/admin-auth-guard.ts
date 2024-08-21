@@ -5,8 +5,10 @@ import { JwtAuthGuard } from './jwt-auth-guard';
 export class AdminGuard extends JwtAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // First, execute the parent JwtAuthGuard to validate the JWT
+    const response = context.switchToHttp().getResponse();
     const isAuthenticated = await super.canActivate(context);
     if (!isAuthenticated) {
+      response.redirect('/login');
       return false;
     }
 
@@ -14,7 +16,7 @@ export class AdminGuard extends JwtAuthGuard implements CanActivate {
     const user = request['user'];
 
     // Check if the user has an admin role
-    if (user.role !== 'admin') {
+    if (user.role !== 'ADMIN') {
       throw new ForbiddenException('Access denied: Admins only');
     }
 

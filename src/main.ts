@@ -3,9 +3,17 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import * as hbs from 'hbs';
-import { mergeClasses } from './views/partials/helpers/mergeClasses';
+import {
+  mergeClasses,
+  range,
+  getPartialStarOpacity,
+  isPartialStar,
+  formatTime,
+} from './views/partials/helpers/helpers';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+
+const port = process.env.PORT || 3000;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -28,6 +36,20 @@ async function bootstrap() {
   // Handlebars
   hbs.registerPartials(join(__dirname, '../..', '/src/views/partials'));
   hbs.registerHelper('mergeClasses', mergeClasses);
+  hbs.registerHelper('range', range);
+  hbs.registerHelper('isPartialStar', isPartialStar);
+  hbs.registerHelper('getPartialStarOpacity', getPartialStarOpacity);
+  hbs.registerHelper('lt', (a, b) => a < b);
+  hbs.registerHelper('gt', (a, b) => a > b);
+  hbs.registerHelper('eq', (a, b) => a == b);
+  hbs.registerHelper('add', (a, b) => a + b);
+  hbs.registerHelper('subtract', (a, b) => a - b);
+  hbs.registerHelper('slice', (array, start, end) => array.slice(start, end));
+  hbs.registerHelper('multiply', (a, b) => a * b);
+  hbs.registerHelper('mulSub', (a, b, c) => (a - b) * c);
+  hbs.registerHelper('format', formatTime);
+  hbs.registerHelper('and', (a, b) => a && b);
+  hbs.registerHelper('neq', (a, b) => a != b);
   app.setViewEngine('hbs');
 
   // Swagger
@@ -39,8 +61,8 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document);
 
-  await app.listen(3000);
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
