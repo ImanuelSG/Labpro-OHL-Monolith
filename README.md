@@ -173,6 +173,8 @@ There are also 6 more endpoints that are used for the Frontend Routing of the we
 
 The website is deployed in https://labpro-production.up.railway.app/
 
+**Fair warning** : The website is deployed in a free tier of railway and it is located in the US region, so the first time loading the website might take a while.
+
 ## B05 - Lighthouse
 
 ### Register Page
