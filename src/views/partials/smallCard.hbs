@@ -1,33 +1,37 @@
 <a href="/film/{{ this.id }}" class="w-fit">
   <div
-    class="h-[400px] w-[200px] flex flex-row hover:scale-105 transition-transform duration-300 cursor-pointer bg-mainblack p-4 rounded-lg shadow-lg"
+    class="h-[500px] w-[232px] flex flex-row hover:scale-105 transition-transform duration-300 cursor-pointer bg-mainblack p-4 rounded-lg shadow-lg"
   >
-    <div class="h-[400px] w-[200px] rounded-lg flex flex-col gap-4">
-      <img
-        src="{{#if this.cover_image_url}}{{ this.cover_image_url }}{{else}}/no-cover.png{{/if}}"
-        alt="Poster of {{ this.title }}"
-        height="400"
-        width="200"
-        class="rounded-t-lg shadow-lg"
-      />
-      <section class="flex flex-col justify-around h-full">
+    <div class="h-full w-full rounded-lg flex flex-col gap-4">
+      <div>
+        <img
+          src="{{#if this.cover_image_url}}{{ this.cover_image_url }}{{else}}/no-cover.png{{/if}}"
+          alt="Poster of {{ this.title }}"
+          height="300"
+          width="200"
+          class="h-[300px] w-[200px] rounded-t-lg shadow-lg"
+        />
+      </div>
+      <section class="flex flex-col justify-between h-full">
         <section class="flex flex-row w-full">
           <section class="flex flex-col gap-1">
-            <h1 class="text-white font-bold text-lg">{{ this.title }} ({{ this.release_year }})</h1>
+            <h1 class="text-white font-bold text-[17px]">
+              {{ this.title }} ({{ this.release_year }})
+            </h1>
             <p class="text-white font-light text-sm">{{ this.director }}</p>
           </section>
         </section>
 
         <!-- Star Rating Component -->
-        <section class="flex flex-row justify-center">
+        <section class="flex flex-col justify-start w-fit">
           <div class="flex items-center relative">
             {{#each (range 0 5)}}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-5 w-5 
-      {{#if (isPartialStar this ../rating)}}text-white 
-      {{else if (lt this ../rating)}}text-[#FFD700]
-      {{else}}text-white{{/if}}"
+    {{#if (isPartialStar this ../rating)}}text-white 
+    {{else if (lt this ../rating)}}text-[#FFD700]
+    {{else}}text-white{{/if}}"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -56,15 +60,14 @@
             {{/if}}
             {{/each}}
           </div>
-
-          <!-- Genre Badges -->
-          <section class="ml-auto flex flex-wrap gap-4 justify-end">
-            {{#each (slice this.genre 0 2) as |genre|}}
-            <div class="bg-primary text-mainwhite text-xs px-2 py-1 rounded-lg h-fit">
-              {{ genre }}
-            </div>
-            {{/each}}
-          </section>
+        </section>
+        <!-- Genre Badges -->
+        <section class="flex flex-wrap gap-4 justify-start">
+          {{#each (slice this.genre 0 2) as |genre|}}
+          <div class="bg-primary text-mainwhite text-xs px-2 py-1 rounded-lg h-fit">
+            {{ genre }}
+          </div>
+          {{/each}}
         </section>
       </section>
     </div>

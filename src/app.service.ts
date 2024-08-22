@@ -1,60 +1,125 @@
 import { Injectable } from '@nestjs/common';
 import { WebFilmsService } from './web/web-films/web-films.service';
-import { createResponse } from './common/response.util';
 import { UserService } from './user/user.service';
+import { WishlistService } from './web/wishlist/wishlist.service';
 
 @Injectable()
 export class AppService {
   constructor(
     private readonly filmService: WebFilmsService,
     private readonly userService: UserService,
+    private readonly wishlistService: WishlistService,
   ) {}
-  async getFilms(query: string, page: string, limit: string) {
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
+
+  private parsePaginationParams(page: string, limit: string) {
+    const pageNumber = parseInt(page, 10) || 1;
+    const limitNumber = parseInt(limit, 10) || 6;
 
     if (isNaN(pageNumber) || isNaN(limitNumber)) {
-      return createResponse('error', 'Invalid page or limit', null, 400);
+      throw new Error('Invalid page or limit');
     }
 
-    const { data } = await this.filmService.findAll(query, pageNumber, limitNumber);
-    const { films, totalCount } = data;
-    const totalPages = Math.ceil(totalCount / limitNumber);
-
-    return createResponse('success', 'Films fetched', { films, totalPages });
+    return { pageNumber, limitNumber };
   }
 
-  async getFilmById(id: string, userId: string) {
-    const data = await this.filmService.findOne(id, userId);
-
-    return data;
-  }
-
-  async getBalance(userId: string) {
+  private async getBalanceData(userId: string | null) {
+    if (!userId) return null;
     const user = await this.userService.findOne(userId);
-
-    const { balance } = user.data;
-
-    if (!user) {
-      return createResponse('error', 'User not found', null, 404);
+    if (!user || !user.data) {
+      throw new Error('User not found');
     }
-
-    return createResponse('success', 'Balance fetched', balance);
+    return user.data.balance;
   }
 
-  async getBoughtFilms(userId: string, query: string, page: string, limit: string) {
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
+  private async getFilmsData(
+    userId: string | null,
+    query: string,
+    pageNumber: number,
+    limitNumber: number,
+  ) {
+    const filmsData = await this.filmService.findAll(query, pageNumber, limitNumber);
+    const { films, totalCount } = filmsData.data;
+    const totalPages = Math.ceil(totalCount / limitNumber);
+    return { films, totalPages };
+  }
 
-    if (isNaN(pageNumber) || isNaN(limitNumber)) {
-      return createResponse('error', 'Invalid page or limit', null, 400);
-    }
+  async getMainPageData(userId: string | null, query: string, page: string, limit: string) {
+    const { pageNumber, limitNumber } = this.parsePaginationParams(page, limit);
 
-    const { data } = await this.filmService.getBoughtFilms(userId, query, pageNumber, limitNumber);
+    const [filmsResult, balance] = await Promise.all([
+      this.getFilmsData(userId, query, pageNumber, limitNumber),
+      this.getBalanceData(userId),
+    ]);
 
-    const { films, totalCount } = data;
+    return {
+      isAuthenticated: !!userId,
+      films: filmsResult.films,
+      query,
+      page: pageNumber,
+      totalPages: filmsResult.totalPages,
+      balance,
+    };
+  }
+
+  async getRegisterPageData(userId: string | null) {
+    const balance = await this.getBalanceData(userId);
+    return {
+      isAuthenticated: !!userId,
+      balance,
+    };
+  }
+
+  async getFilmDetailPageData(userId: string | null, filmId: string) {
+    const isAuthenticated = !!userId;
+
+    const [filmData, balance] = await Promise.all([
+      this.filmService.findOne(filmId, userId),
+      this.getBalanceData(userId),
+    ]);
+
+    const { film, isBought, isWished, sortedRecommendedFilms } = filmData.data;
+
+    return {
+      isAuthenticated,
+      balance,
+      film,
+      isBought,
+      isWished,
+      sortedRecommendedFilms,
+    };
+  }
+
+  async getBoughtFilmsPageData(userId: string, query: string, page: string, limit: string) {
+    const { pageNumber, limitNumber } = this.parsePaginationParams(page, limit);
+
+    const [boughtFilmsData, balance] = await Promise.all([
+      this.filmService.getBoughtFilms(userId, query, pageNumber, limitNumber),
+      this.getBalanceData(userId),
+    ]);
+
+    const { films, totalCount } = boughtFilmsData.data;
     const totalPages = Math.ceil(totalCount / limitNumber);
 
-    return createResponse('success', 'Bought films fetched', { films, totalPages });
+    return {
+      isAuthenticated: true,
+      balance,
+      films,
+      query,
+      page: pageNumber,
+      totalPages,
+    };
+  }
+
+  async getWishlistPageData(userId: string) {
+    const [wishlistData, balance] = await Promise.all([
+      this.wishlistService.findAll(userId),
+      this.getBalanceData(userId),
+    ]);
+
+    return {
+      isAuthenticated: true,
+      films: wishlistData.data.films,
+      balance,
+    };
   }
 }

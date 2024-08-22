@@ -39,47 +39,6 @@
     <!-- CSS and JavaScript -->
     <link href="/css/main.css" rel="stylesheet" />
     <script>
-      function handleReviewSubmit() {
-        const rating = document.getElementById('rating').value;
-        const review = document.getElementById('review').value;
-
-        if (!rating) {
-          alert('Please select a rating.');
-          return;
-        }
-
-        if (!review) {
-          alert('Please write a review.');
-          return;
-        }
-
-        console.log('Rating:', rating);
-        console.log('Review:', review);
-
-        // Submit the review data (implement your actual submission logic here)
-        alert('Review submitted successfully!');
-
-        // Example: Sending data via POST request
-        /*
-  fetch('/submit-review', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ rating, review }),
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-  */
-
-        alert('Review submitted successfully!');
-      }
-
       function openModal() {
         console.log('clicked');
         const reviewModal = document.getElementById('review-modal');
@@ -131,6 +90,48 @@
       function closeAlert() {
         document.getElementById('alertModal').classList.add('hidden');
         document.getElementById('alertModal').classList.remove('flex');
+      }
+
+      async function handleReviewSubmit() {
+        try {
+          startLoading();
+          const rating = document.getElementById('rating').value;
+          const review = document.getElementById('review').value;
+
+          if (!rating) {
+            alert('Please select a rating.');
+            return;
+          }
+
+          if (!review) {
+            alert('Please write a review.');
+            return;
+          }
+
+          const filmId = '{{ film.id }}';
+
+          const res = await fetch('/reviews/' + filmId, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ rating, review }),
+          });
+
+          const data = await res.json();
+
+          if (data.status === 'success') {
+            alert('Review added.');
+          } else {
+            alert('Failed to add review: ' + data.message);
+          }
+        } catch (e) {
+          console.log(e);
+          alert('Failed to submit review.');
+        } finally {
+          stopLoading();
+          location.reload();
+        }
       }
 
       async function confirmPurchase(price) {
@@ -319,7 +320,9 @@
             <section class="w-fit flex flex-col gap-1">
               <section class="flex flex-row gap-4">
                 {{> starRating rating=film.rating}}
-                <p class="text-mainwhite text-[24px] font-light pt-1">{{ film.rating }}</p>
+                <p class="text-mainwhite text-[24px] font-light pt-1">
+                  {{ roundToTwo film.rating }}
+                </p>
               </section>
               <p class="text-mainwhite text-[15px] font-light">
                 out of {{ film.ratingCount }} reviews.
@@ -589,88 +592,38 @@
             class="flex flex-row gap-10 scroll-smooth overflow-auto p-4 max-w-[1280px] w-full"
           >
             {{#each sortedRecommendedFilms}}
-            <a href="/film/{{ this.id }}" class="w-fit">
-              <div
-                class="h-[500px] w-[232px] flex flex-row hover:scale-105 transition-transform duration-300 cursor-pointer bg-mainblack p-4 rounded-lg shadow-lg"
-              >
-                <div class="h-full w-full rounded-lg flex flex-col gap-4">
-                  <div>
-                    <img
-                      src="{{#if this.cover_image_url}}{{
-                        this.cover_image_url
-                      }}{{else}}/no-cover.png{{/if}}"
-                      alt="Poster of {{ this.title }}"
-                      height="300"
-                      width="200"
-                      class="h-[300px] w-[200px] rounded-t-lg shadow-lg"
-                    />
-                  </div>
-                  <section class="flex flex-col justify-between h-full">
-                    <section class="flex flex-row w-full">
-                      <section class="flex flex-col gap-1">
-                        <h1 class="text-white font-bold text-[17px]">
-                          {{ this.title }} ({{ this.release_year }})
-                        </h1>
-                        <p class="text-white font-light text-sm">{{ this.director }}</p>
-                      </section>
-                    </section>
+            {{> smallCard this}}
+            {{/each}}
+          </section>
 
-                    <!-- Star Rating Component -->
-                    <section class="flex flex-col justify-start w-fit">
-                      <div class="flex items-center relative">
-                        {{#each (range 0 5)}}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5 
-    {{#if (isPartialStar this ../rating)}}text-white 
-    {{else if (lt this ../rating)}}text-[#FFD700]
-    {{else}}text-white{{/if}}"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.82a1 1 0 00.95.69h5.104c.969 0 1.371 1.24.588 1.81l-4.13 2.996a1 1 0 00-.364 1.118l1.563 4.82c.3.921-.755 1.688-1.538 1.118l-4.131-2.996a1 1 0 00-1.175 0l-4.131 2.996c-.783.57-1.838-.197-1.538-1.118l1.563-4.82a1 1 0 00-.364-1.118l-4.13-2.996c-.783-.57-.38-1.81.588-1.81h5.104a1 1 0 00.95-.69l1.562-4.82z"
-                          />
-                        </svg>
-                        {{#if (isPartialStar this ../rating)}}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5 absolute text-[#FFD700] z-10"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          style="left: {{multiply this 20}}%;"
-                        >
-                          <defs>
-                            <clipPath id="star-clip-{{ this }}">
-                              <rect
-                                x="0"
-                                y="0"
-                                width="{{mulSub ../rating this 100}}%"
-                                height="100%"
-                              />
-                            </clipPath>
-                          </defs>
-                          <path
-                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.82a1 1 0 00.95.69h5.104c.969 0 1.371 1.24.588 1.81l-4.13 2.996a1 1 0 00-.364 1.118l1.563 4.82c.3.921-.755 1.688-1.538 1.118l-4.131-2.996a1 1 0 00-1.175 0l-4.131 2.996c-.783.57-1.838-.197-1.538-1.118l1.563-4.82a1 1 0 00-.364-1.118l-4.13-2.996c-.783-.57-.38-1.81.588-1.81h5.104a1 1 0 00.95-.69l1.562-4.82z"
-                            clip-path="url(#star-clip-{{ this }})"
-                          />
-                        </svg>
-                        {{/if}}
-                        {{/each}}
-                      </div>
-                    </section>
-                    <!-- Genre Badges -->
-                    <section class="flex flex-wrap gap-4 justify-start">
-                      {{#each (slice this.genre 0 2) as |genre|}}
-                      <div class="bg-primary text-mainwhite text-xs px-2 py-1 rounded-lg h-fit">
-                        {{ genre }}
-                      </div>
-                      {{/each}}
-                    </section>
+          {{else}}
+          <h1 class="text-[26px] text-mainwhite">No movies is similar to this one right now</h1>
+          {{/if}}
+        </section>
+        <section class="flex flex-col gap-5">
+          <h1 class="text-mainwhite text-[32px] font-bold">What other says</h1>
+          {{#if film.Reviews.length}}
+
+          <section
+            class="flex flex-row gap-10 scroll-smooth overflow-auto p-4 max-w-[1280px] w-full"
+          >
+            {{#each film.Reviews}}
+            <div class="flex rounded-lg bg-mainblack bg-opacity-90 px-6 pt-4 pb-6">
+              <div class="flex flex-col gap-4">
+                <section class="flex w-[350px] h-auto flex-col gap-2">
+                  <section class="flex flex-row items-center justify-start">
+                    <p class="font-bold text-mainwhite text-[32px]">{{ this.username }}</p>
+                    <p class="font-light text-mainwhite text-[15px] ml-auto">
+                      {{ formatDate this.createdAt }}
+                    </p>
                   </section>
-                </div>
+                  <p class="font-normal text-mainwhite text-[20px]">
+                    {{ this.review }}
+                  </p>
+                </section>
+                {{> starRating rating=this.rating}}
               </div>
-            </a>
+            </div>
             {{/each}}
           </section>
 

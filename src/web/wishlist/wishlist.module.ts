@@ -6,5 +6,6 @@ import { PrismaService } from 'prisma/prisma.service';
 @Module({
   controllers: [WishlistController],
   providers: [WishlistService, PrismaService],
+  exports: [WishlistService],
 })
 export class WishlistModule {}

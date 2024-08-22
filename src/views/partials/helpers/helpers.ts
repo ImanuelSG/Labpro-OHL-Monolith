@@ -43,3 +43,15 @@ export function formatTime(seconds: number) {
 
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
+
+export function formatDate(date: string) {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+export function roundToTwoDecimals(num: number) {
+  return num.toFixed(2);
+}

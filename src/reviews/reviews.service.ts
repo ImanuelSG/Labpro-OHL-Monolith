@@ -82,6 +82,7 @@ export class ReviewsService {
           rating: true,
           review: true,
           username: true,
+          createdAt: true,
         },
       });
 

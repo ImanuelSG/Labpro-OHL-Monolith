@@ -9,6 +9,7 @@ import {
   getPartialStarOpacity,
   isPartialStar,
   formatTime,
+  formatDate,
 } from './views/partials/helpers/helpers';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
@@ -50,6 +51,8 @@ async function bootstrap() {
   hbs.registerHelper('format', formatTime);
   hbs.registerHelper('and', (a, b) => a && b);
   hbs.registerHelper('neq', (a, b) => a != b);
+  hbs.registerHelper('formatDate', formatDate);
+  hbs.registerHelper('roundToTwo', (num) => num.toFixed(2));
   app.setViewEngine('hbs');
 
   // Swagger
