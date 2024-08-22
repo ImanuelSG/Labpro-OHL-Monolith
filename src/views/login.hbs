@@ -3,6 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login to Your Account</title>
+
+    <!-- Meta Description -->
+    <meta
+      name="description"
+      content="Login for a Proflix account and enjoy unlimited access to your favorite movies and series."
+    />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Login Your Account - Proflix" />
+    <meta
+      property="og:description"
+      content="Login to Proflix and start watching your favorite movies and series."
+    />
+    <meta property="og:image" content="/images/logo.png" />
+    <meta property="og:url" content="https://labpro-production.up.railway.app/login" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Login Your Account - Proflix" />
+    <meta
+      name="twitter:description"
+      content="Login to Proflix and start watching your favorite movies and series."
+    />
+    <meta name="twitter:image" content="/images/logo.png" />
     <title>Login</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
@@ -24,7 +50,13 @@
     {{>navbar isAuthenticated=isAuthenticated}}
     <div class="w-full max-w-lg p-10 rounded-lg shadow-md bg-mainblack mt-20">
       <section class="flex flex-col items-center justify-center">
-        <img src="/images/logo.png" class="object-cover items-center" width="265px" height="65px" />
+        <img
+          src="/images/logo.png"
+          class="object-cover items-center"
+          width="265px"
+          height="65px"
+          alt="Proflix logo"
+        />
 
         {{> typography/title
         className="text-center text-primary p-6"
@@ -74,7 +106,11 @@
         <section
           class="flex flex-col gap-2 items-center justify-center rounded-lg bg-mainblack bg-opacity-80 p-6"
         >
-          <img src="/images/logo.png" class="object-cover items-center animate-pulse" />
+          <img
+            src="/images/logo.png"
+            class="object-cover items-center animate-pulse"
+            alt="Proflix logo"
+          />
           <p class="text-mainwhite text-xl font-semibold">Loading...</p>
         </section>
       </div>

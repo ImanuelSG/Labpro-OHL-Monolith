@@ -40,7 +40,6 @@
     <link href="/css/main.css" rel="stylesheet" />
     <script>
       function openModal() {
-        console.log('clicked');
         const reviewModal = document.getElementById('review-modal');
         reviewModal.classList.remove('hidden');
         reviewModal.classList.add('flex');
@@ -222,7 +221,6 @@
               });
 
               const data = await res.json();
-              console.log(data);
 
               if (data.status === 'success') {
                 alert('Film removed from your wishlist.');
@@ -268,7 +266,6 @@
           closeVideoPlayer();
         }
         if (event.target === reviewModal) {
-          console.log();
           closeModal();
         }
       };

@@ -402,8 +402,10 @@ async function main() {
     createUser('user4@example.com', 'userFour', 'User', 'Four', 300),
   ]);
 
+  const filteredUsers = users.filter((user) => user.role === 'USER');
+
   for (const movie of movies) {
-    await createFilmWithReviews(movie, users, reviews);
+    await createFilmWithReviews(movie, filteredUsers, reviews);
   }
 }
 

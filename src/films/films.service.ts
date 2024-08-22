@@ -79,7 +79,6 @@ export class FilmsService {
     cover_image?: Express.Multer.File,
   ) {
     try {
-      // Upload the video file to Cloudinary
       const { title, description, director, release_year, genre, price, duration } = createFilmDto;
       const oldFilm = await this.prisma.film.findFirst({ where: { title } });
 
@@ -92,13 +91,10 @@ export class FilmsService {
       let coverImageUrl: string | null = null;
 
       if (cover_image) {
-        // Upload the cover image to Cloudinary
         const coverImageResult = await this.cloudinaryService.uploadImage(cover_image[0]);
 
         coverImageUrl = coverImageResult.secure_url;
       }
-
-      // Check if the film already exists
 
       // Save the film details and video URL in the database
       const film = await this.prisma.film.create({
@@ -141,11 +137,10 @@ export class FilmsService {
 
       let video_url = existingFilm.video_url;
       let cover_image_url = existingFilm.cover_image_url;
-
       if (video) {
         // Delete the old video from Cloudinary
         const oldVideoPublicId = this.extractPublicId(existingFilm.video_url);
-        await this.cloudinaryService.deleteImage(oldVideoPublicId);
+        await this.cloudinaryService.deleteResource(oldVideoPublicId, 'video');
 
         // Upload the new video to Cloudinary
         const videoResult = await this.cloudinaryService.uploadImage(video[0]);
@@ -156,7 +151,7 @@ export class FilmsService {
         // Delete the old cover image from Cloudinary
         if (existingFilm.cover_image_url) {
           const oldCoverImagePublicId = this.extractPublicId(existingFilm.cover_image_url);
-          await this.cloudinaryService.deleteImage(oldCoverImagePublicId);
+          await this.cloudinaryService.deleteResource(oldCoverImagePublicId, 'image');
         }
 
         // Upload the new cover image to Cloudinary
@@ -193,9 +188,16 @@ export class FilmsService {
         return createResponse('error', 'Film not Found', null, HttpStatus.NOT_FOUND);
       }
 
+      const image = existingFilm.cover_image_url;
+      if (image) {
+        // Delete the cover image from Cloudinary
+        const imagePublicId = this.extractPublicId(existingFilm.cover_image_url);
+        await this.cloudinaryService.deleteResource(imagePublicId, 'image');
+      }
+
       // Delete the video from Cloudinary
       const publicId = this.extractPublicId(existingFilm.video_url);
-      await this.cloudinaryService.deleteImage(publicId);
+      await this.cloudinaryService.deleteResource(publicId, 'video');
 
       // Delete the film from the database
       const film = await this.prisma.film.delete({ where: { id } });
