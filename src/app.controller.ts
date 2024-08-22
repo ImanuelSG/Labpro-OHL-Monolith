@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { UserGuard } from './guard/user-auth-guard';
 import { NotAuthedGuard } from './guard/not-authed-guard';
 
-@ApiTags('website')
+@ApiTags('Website')
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}

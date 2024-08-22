@@ -2,7 +2,7 @@ import { Controller, Get, Param, Query, Req } from '@nestjs/common';
 import { WebFilmsService } from './web-films.service';
 import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('web-films')
+@ApiTags('Web-films')
 @Controller('web-films')
 export class WebFilmsController {
   constructor(private readonly webFilmsService: WebFilmsService) {}

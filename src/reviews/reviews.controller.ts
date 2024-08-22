@@ -4,7 +4,7 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { UserGuard } from 'src/guard/user-auth-guard';
 
-@ApiTags('reviews')
+@ApiTags('Reviews')
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}

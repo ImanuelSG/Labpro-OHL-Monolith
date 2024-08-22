@@ -1,7 +1,9 @@
-import { Controller, Get, Param, UseGuards, Req, Patch } from '@nestjs/common';
+import { Controller, Param, UseGuards, Req, Patch } from '@nestjs/common';
 import { WishlistService } from './wishlist.service';
 import { UserGuard } from 'src/guard/user-auth-guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Wishlist')
 @Controller('wishlist')
 @UseGuards(UserGuard)
 export class WishlistController {
@@ -11,11 +13,5 @@ export class WishlistController {
   async create(@Param('filmId') filmId: string, @Req() req) {
     const userId = req.user.sub;
     return this.wishlistService.create(filmId, userId);
-  }
-
-  @Get()
-  async findAll(@Req() req) {
-    const userId = req.user.sub;
-    return this.wishlistService.findAll(userId);
   }
 }

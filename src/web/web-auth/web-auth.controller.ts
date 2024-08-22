@@ -3,7 +3,7 @@ import { WebAuthService } from './web-auth.service';
 import { ApiTags } from '@nestjs/swagger';
 import { WebLoginDto } from './dto/web-login.dto';
 
-@ApiTags('web-auth')
+@ApiTags('Web-auth')
 @Controller('web-auth')
 export class WebAuthController {
   constructor(private readonly webAuthService: WebAuthService) {}

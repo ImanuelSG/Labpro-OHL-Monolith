@@ -5,10 +5,6 @@
     <div class="h-[600px] w-[300px] rounded-lg flex flex-col gap-4">
       <img
         src="{{#if this.cover_image_url}}{{ this.cover_image_url }}{{else}}/no-cover.png{{/if}}"
-        srcset="
-    {{#if this.cover_image_url}}{{ this.cover_image_url | resize(300) }} 300w,
-    {{ this.cover_image_url | resize(600) }} 600w
-  {{/if}}"
         sizes="(max-width: 600px) 100vw, 50vw"
         alt="Poster of {{ this.title }}"
         height="450"

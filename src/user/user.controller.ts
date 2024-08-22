@@ -5,7 +5,7 @@ import { AddBalanceDto } from './dto/add-balance.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/guard/admin-auth-guard';
 
-@ApiTags('users')
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}

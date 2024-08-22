@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateFilmDto } from './dto/create-film.dto';
-import { UpdateFilmDto } from './dto/update-film.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { createResponse } from 'src/common/response.util';
 import { Film } from '@prisma/client';
@@ -124,7 +123,7 @@ export class FilmsService {
 
   async update(
     id: string,
-    updateFilmDto: UpdateFilmDto,
+    updateFilmDto: CreateFilmDto,
     video?: Express.Multer.File,
     cover_image?: Express.Multer.File,
   ) {

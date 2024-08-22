@@ -13,12 +13,11 @@ import {
 } from '@nestjs/common';
 import { FilmsService } from './films.service';
 import { CreateFilmDto } from './dto/create-film.dto';
-import { UpdateFilmDto } from './dto/update-film.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/guard/admin-auth-guard';
 
-@ApiTags('films')
+@ApiTags('Films')
 @Controller('films')
 @UseGuards(AdminGuard)
 export class FilmsController {
@@ -48,7 +47,7 @@ export class FilmsController {
   async update(
     @UploadedFiles() files,
     @Param('id') id: string,
-    @Body() updateFilmDto: UpdateFilmDto,
+    @Body() updateFilmDto: CreateFilmDto,
   ) {
     const { video, cover_image } = files;
     return await this.filmsService.update(id, updateFilmDto, video, cover_image);
