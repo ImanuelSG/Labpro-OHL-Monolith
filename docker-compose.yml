@@ -14,6 +14,7 @@ services:
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
       JWT_SECRET: ${JWT_SECRET}
+      PORT: ${PORT}
     networks:
       - app-network
 

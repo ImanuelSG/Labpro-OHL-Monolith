@@ -11,11 +11,8 @@ export class TransactionController {
 
   @Post(':filmId')
   async create(@Param('filmId') filmId: string, @Req() req) {
-    console.log('filmId', filmId);
-
     const userId = req.user.sub;
 
-    console.log('userId', userId);
     return this.transactionService.create(userId, filmId);
   }
 

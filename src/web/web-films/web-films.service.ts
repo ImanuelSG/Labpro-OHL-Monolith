@@ -112,7 +112,7 @@ export class WebFilmsService {
           where: { id: filmId },
           include: {
             Reviews: {
-              select: { username: true, rating: true, review: true },
+              select: { username: true, rating: true, review: true, createdAt: true },
             },
           },
         });

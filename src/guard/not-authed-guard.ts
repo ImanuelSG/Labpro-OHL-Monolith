@@ -7,9 +7,12 @@ export class NotAuthedGuard extends JwtAuthGuard implements CanActivate {
     try {
       const response = context.switchToHttp().getResponse();
       const isAuthenticated = await super.canActivate(context);
+
       if (isAuthenticated) {
         response.redirect('/');
         return false;
+      } else {
+        return true;
       }
     } catch (error) {
       if (error instanceof UnauthorizedException) {

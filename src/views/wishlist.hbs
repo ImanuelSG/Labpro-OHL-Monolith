@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proflix - Your Wishlist</title>
+
+    <!-- Meta Description -->
+    <meta
+      name="description"
+      content="Make a list of all the films you want to watch on Proflix. Add your favorite movies to your wishlist."
+    />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Proflix Wishlist" />
+    <meta
+      property="og:description"
+      content="Create a list of all the films you want to watch on Proflix. Add your favorite movies to your wishlist."
+    />
+    <meta property="og:image" content="/images/logo.png" />
+    <meta property="og:url" content="https://labpro-production.up.railway.app/wishlist" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Your Proflix Wishlist" />
+    <meta
+      name="twitter:description"
+      content="Create a list of all the films you want to watch on Proflix. Add your favorite movies to your wishlist."
+    />
+    <meta name="twitter:image" content="/images/logo.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/images/logo.png" type="image/png" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS and JavaScript -->
+    <link href="/css/main.css" rel="stylesheet" />
+    <script>
+      function startLoading() {
+        loadingSpinner.classList.remove('hidden');
+        loadingSpinner.classList.add('flex');
+      }
+
+      function stopLoading() {
+        loadingSpinner.classList.remove('flex');
+        loadingSpinner.classList.add('hidden');
+      }
+
+      function showAlert(title, message, onConfirm) {
+        document.getElementById('alertTitle').textContent = title;
+        document.getElementById('alertMessage').textContent = message;
+
+        document.getElementById('alertModal').classList.remove('hidden');
+        document.getElementById('alertModal').classList.add('flex');
+
+        document.getElementById('alertConfirmButton').onclick = function () {
+          onConfirm();
+          closeAlert();
+        };
+
+        document.getElementById('alertCancelButton').onclick = function () {
+          closeAlert();
+        };
+      }
+
+      function closeAlert() {
+        document.getElementById('alertModal').classList.add('hidden');
+        document.getElementById('alertModal').classList.remove('flex');
+      }
+
+      async function confirmPurchase(price, filmId, filmTitle) {
+        try {
+          showAlert(
+            'Confirm Purchase',
+            `Are you sure you want to buy ${filmTitle} for ${price}?`,
+            async function () {
+              try {
+                startLoading();
+
+                const res = await fetch(`/transaction/${filmId}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                });
+
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                  alert('Film purchased successfully.');
+                } else {
+                  alert('Failed to purchase film: ' + data.message);
+                }
+              } catch (e) {
+                console.log(e);
+              } finally {
+                stopLoading();
+                location.reload();
+              }
+            },
+          );
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      async function removeFromWishlist(filmTitle, filmId) {
+        showAlert(
+          'Remove from Wishlist',
+          `Do you want to remove ${filmTitle} from your wishlist?`,
+          async function () {
+            try {
+              startLoading();
+
+              const res = await fetch(`/wishlist/${filmId}`, {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
+
+              const data = await res.json();
+
+              if (data.status === 'success') {
+                alert('Film removed from your wishlist.');
+              } else {
+                alert('Failed to remove film from your wishlist: ' + data.message);
+              }
+            } catch (e) {
+              console.log(e);
+            } finally {
+              stopLoading();
+              location.reload();
+            }
+          },
+        );
+      }
+    </script>
+  </head>
+  <body
+    style="
+      background-image: url('/images/netflix-bg.webp');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    "
+    class="font-sans flex flex-col justify-center items-center min-h-screen p-10"
+  >
+    {{> navbar isAuthenticated=isAuthenticated balance=balance}}
+
+    <!-- Search Bar Section -->
+    <div class="flex flex-col gap-6 mb-5 pt-20 w-1/2 min-w-[300px]">
+      <section class="flex flex-col">
+        {{> typography/title
+        className="text-center text-mainwhite text-[32px] font-bold"
+        content="Your Wishlist"
+        }}
+        <h1 class="text-center text-mainwhite font-light text-[26px]">
+          Films you want to watch on Proflix. Dont miss out on your favorite movies.
+        </h1>
+      </section>
+
+      <form action="/wishlist" method="GET" class="flex justify-center">
+        <input
+          type="text"
+          name="q"
+          placeholder="Search your films..."
+          value="{{ query }}"
+          class="p-2 border rounded-l-lg w-full"
+        />
+        <button type="submit" class="bg-primary text-mainwhite p-2 rounded-r-lg hover:opacity-80">
+          <svg
+            class="w-6 h-6"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            viewBox="0 0 50 50"
+            width="500px"
+            height="500px"
+            fill="currentColor"
+          >
+            <path
+              d="M21,3C11.6,3,4,10.6,4,20s7.6,17,17,17s17-7.6,17-17S30.4,3,21,3z M21,33c-7.2,0-13-5.8-13-13c0-7.2,5.8-13,13-13c7.2,0,13,5.8,13,13C34,27.2,28.2,33,21,33z"
+            />
+            <line
+              fill="none"
+              stroke="#FFFFFF"
+              stroke-width="6"
+              stroke-miterlimit="10"
+              x1="31.2"
+              y1="31.2"
+              x2="44.5"
+              y2="44.5"
+            />
+          </svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Movies Grid Section -->
+    <div class="flex flex-col gap-5">
+      {{#if films.length}}
+      {{#each films as |film|}}
+      <div
+        class="bg-black bg-opacity-60 p-10 rounded-lg max-w-full min-[400px]:max-w-full xl:max-w-[1280px] mt-20"
+      >
+        <section class="flex flex-col gap-5">
+          <section class="flex flex-col lg:flex-row gap-10">
+            <!-- Image and rating -->
+            <section class="flex flex-col items-center justify-center">
+              <div class="relative w-[300px] h-[450px]">
+                <img
+                  src="{{ film.cover_image_url }}"
+                  alt="{{ film.title }} cover image"
+                  width="300px"
+                  height="450px"
+                  class="absolute object-cover rounded-lg shadow-lg"
+                />
+              </div>
+            </section>
+            <section class="flex flex-col gap-10 max-w-[1280px]">
+              <section class="flex flex-col gap-6 justify-between">
+                <h1 class="text-mainwhite font-bold text-[32px]">
+                  {{ film.title }} ({{ film.release_year }})
+                </h1>
+                <section class="flex flex-wrap gap-4 justify-start">
+                  {{#each film.genre as |genre|}}
+                  <div class="bg-primary text-mainwhite text-lg px-2 py-1 rounded-lg h-fit">
+                    {{ genre }}
+                  </div>
+                  {{/each}}
+                </section>
+                <section class="w-fit flex flex-col gap-1">
+                  <section class="flex flex-row gap-4">
+                    {{> starRating rating=film.rating}}
+                    <p class="text-mainwhite text-[24px] font-light pt-1">
+                      {{roundToTwo film.rating}}
+                    </p>
+                  </section>
+                  <p class="text-mainwhite text-[15px] font-light">
+                    out of {{ film.ratingCount }} reviews.
+                  </p>
+                </section>
+                <section class="flex flex-row gap-4 justify-start items-center">
+                  <svg
+                    version="1.1"
+                    id="Capa_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    x="0px"
+                    y="0px"
+                    viewBox="0 0 274.341 274.341"
+                    style="enable-background: new 0 0 274.341 274.341"
+                    xml:space="preserve"
+                    class="h-7 w-7 text-mainwhite"
+                  >
+                    <g>
+                      <path
+                        style="fill: #ffffff"
+                        d="M232.558,109.851H81.097L220.73,51.272c4.301-1.804,7.645-5.184,9.418-9.518
+		c1.771-4.334,1.754-9.089-0.05-13.39l-7.399-17.641C219.965,4.21,213.62,0,206.534,0c-2.325,0-4.594,0.457-6.742,1.358
+		L35.015,70.483c-8.899,3.73-13.102,14.007-9.369,22.907l7.4,17.64c1.262,3.009,3.301,5.518,5.82,7.355
+		c-1.576,2.626-2.499,5.686-2.499,8.965v129.49c0,9.649,7.851,17.5,17.5,17.5h178.69c9.649,0,17.5-7.851,17.5-17.5v-129.49
+		C250.058,117.702,242.207,109.851,232.558,109.851z M235.058,127.351v21.629h-23.511l10.556-24.129h10.455
+		C233.913,124.851,235.058,125.995,235.058,127.351z M53.867,124.851h19.239L62.551,148.98H51.367v-21.629
+		C51.367,125.995,52.512,124.851,53.867,124.851z M84.022,124.851h35.111l-10.556,24.129H73.466L84.022,124.851z M130.049,124.851
+		h35.112l-10.556,24.129h-35.112L130.049,124.851z M176.076,124.851h35.111l-10.556,24.129H165.52L176.076,124.851z M142.995,67.618
+		L110.616,81.2l0.399-26.332l32.379-13.584L142.995,67.618z M153.459,37.062l32.379-13.582l-0.399,26.332L153.06,63.396
+		L153.459,37.062z M100.552,85.423L68.173,99.005l0.399-26.333l32.379-13.583L100.552,85.423z M205.596,15.19
+		c0.301-0.127,0.616-0.19,0.939-0.19c0.842,0,1.89,0.473,2.333,1.528l7.399,17.64c0.343,0.817,0.146,1.547-0.003,1.909
+		c-0.147,0.362-0.518,1.02-1.335,1.363l-19.426,8.149l0.399-26.333L205.596,15.19z M39.48,85.679
+		c0.148-0.362,0.519-1.02,1.336-1.363l17.691-7.422l-0.399,26.334l-7.959,3.339c-0.301,0.127-0.616,0.19-0.939,0.19
+		c-0.842,0-1.89-0.473-2.333-1.528l-7.399-17.64C39.135,86.771,39.332,86.041,39.48,85.679z M232.558,259.341H53.867
+		c-1.355,0-2.5-1.145-2.5-2.5V163.98h183.69v92.861C235.058,258.196,233.913,259.341,232.558,259.341z"
+                      />
+                      <path
+                        style="fill: #ffffff"
+                        d="M148.553,194.105H73.287c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5,7.5,7.5h75.266
+		c4.143,0,7.5-3.357,7.5-7.5S152.695,194.105,148.553,194.105z"
+                      />
+                      <path
+                        style="fill: #ffffff"
+                        d="M148.553,224.493H73.287c-4.143,0-7.5,3.357-7.5,7.5c0,4.143,3.357,7.5,7.5,7.5h75.266
+		c4.143,0,7.5-3.357,7.5-7.5C156.053,227.851,152.695,224.493,148.553,224.493z"
+                      />
+                    </g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                    <g></g>
+                  </svg>
+                  <p class="text-mainwhite font-bold text-[22px]">{{ film.director }}</p>
+                </section>
+                <section class="flex flex-row items-center justify-start gap-4">
+                  <svg
+                    version="1.1"
+                    id="Layer_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    x="0px"
+                    y="0px"
+                    viewBox="0 0 122.88 122.88"
+                    style="enable-background: new 0 0 122.88 122.88"
+                    xml:space="preserve"
+                    class="text-mainwhite h-7 w-7"
+                    fill="currentColor"
+                  >
+                    <style type="text/css">
+                      .st0 {
+                        fill-rule: evenodd;
+                        clip-rule: evenodd;
+                      }
+                    </style>
+                    <g>
+                      <path
+                        class="st0"
+                        d="M61.44,0c33.93,0,61.44,27.51,61.44,61.44c0,33.93-27.51,61.44-61.44,61.44C27.51,122.88,0,95.37,0,61.44 C0,27.51,27.51,0,61.44,0L61.44,0z M52.92,30.52h7.51c1.37,0,2.5,1.13,2.5,2.5v28.94h26.41c1.38,0,2.5,1.13,2.5,2.5v7.51 c0,1.38-1.13,2.5-2.5,2.5H50.41V33.02C50.41,31.64,51.54,30.52,52.92,30.52L52.92,30.52z M61.44,13.95 c26.23,0,47.49,21.26,47.49,47.49c0,26.23-21.26,47.49-47.49,47.49c-26.23,0-47.49-21.26-47.49-47.49 C13.95,35.22,35.21,13.95,61.44,13.95L61.44,13.95z"
+                      />
+                    </g>
+                  </svg>
+                  <p class="text-mainwhite font-bold text-[22px]">{{format film.duration}}</p>
+                </section>
+                <p class="text-mainwhite font-light text-[18px] text-justify">
+                  {{ film.description }}
+                </p>
+              </section>
+            </section>
+          </section>
+          <section class="flex flex-row gap-10 justify-center items-center">
+            <button
+              class="bg-primary text-mainwhite py-2 px-4 rounded-lg hover:bg-opacity-80 transition-opacity duration-500 w-1/2 font-semibold"
+              onclick="confirmPurchase('{{ film.price }}', '{{ film.id }}', '{{ film.title }}')"
+            >
+              Buy Film for {{ film.price }}
+            </button>
+            <button
+              onclick="removeFromWishlist('{{ film.title }}' , 
+              '{{ film.id }}')"
+              class="bg-mainwhite text-primary py-2 px-4 rounded-lg hover:bg-opacity-80 transition-opacity duration-500 w-1/2 font-semibold"
+            >
+              Remove from Wishlist
+            </button>
+          </section>
+        </section>
+      </div>
+      {{/each}}
+      {{else}}
+      <h1 class="text-[26px] text-mainwhite">No films found in your wishlist</h1>
+      {{/if}}
+    </div>
+
+    <!-- Pagination Section -->
+    <div class="flex justify-center space-x-2 mt-10">
+      {{!-- Show "Prev" button if not on the first page --}}
+      {{#if (gt page 1)}}
+      <a
+        href="?q={{ query }}&page={{subtract page 1}}"
+        class="bg-primary text-mainwhite px-4 py-2 rounded-lg hover:bg-opacity-80 transition-opacity duration-500"
+        >Prev</a
+      >
+      {{/if}}
+
+      {{!-- Loop through all pages --}}
+      {{#each (range 1 (add totalPages 1))}}
+      <a
+        href="?q={{ query }}&page={{ this }}"
+        class="text-mainwhite px-4 py-2 rounded-lg hover:bg-opacity-80 transition-opacity duration-500 {{#if (eq this ../page)}}bg-mainblack{{else}}bg-primary{{/if}}"
+        >{{ this }}</a
+      >
+      {{/each}}
+
+      {{!-- Show "Next" button if not on the last page --}}
+      {{#if (lt page totalPages)}}
+      <a
+        href="?q={{ query }}&page={{add page 1}}"
+        class="bg-primary text-mainwhite px-4 py-2 rounded-lg hover:bg-opacity-80 transition-opacity duration-500"
+        >Next</a
+      >
+      {{/if}}
+    </div>
+
+    <div
+      id="alertModal"
+      class="hidden fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-75"
+    >
+      <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 text-center">
+        <h2 id="alertTitle" class="text-lg font-semibold mb-4">Alert</h2>
+        <p id="alertMessage" class="mb-6">This is an alert message.</p>
+        <div class="flex justify-center space-x-4">
+          <button
+            id="alertConfirmButton"
+            class="bg-primary text-mainwhite py-2 px-4 rounded-lg hover:bg-opacity-80 transition-opacity duration-500"
+          >
+            Confirm
+          </button>
+          <button
+            id="alertCancelButton"
+            class="bg-gray-300 text-black py-2 px-4 rounded-lg hover:bg-gray-400 transition-opacity duration-500"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      id="loadingSpinner"
+      class="hidden fixed inset-0 items-center justify-center bg-black bg-opacity-50 z-50"
+    >
+      <section
+        class="flex flex-col gap-2 items-center justify-center rounded-lg bg-mainblack bg-opacity-80 p-6"
+      >
+        <img
+          src="/images/logo.png"
+          class="object-cover items-center animate-pulse"
+          alt="Image of Proflix logo"
+        />
+        <p class="text-mainwhite text-xl font-semibold">Loading...</p>
+      </section>
+    </div>
+  </body>
+</html>

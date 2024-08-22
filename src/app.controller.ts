@@ -58,8 +58,13 @@ export class AppController {
   @Get('/wishlist')
   @Render('wishlist')
   @UseGuards(UserGuard)
-  async getWishlistPage(@Req() req) {
+  async getWishlistPage(
+    @Req() req,
+    @Query('q') query = '',
+    @Query('page') page = '1',
+    @Query('limit') limit = '6',
+  ) {
     const userId = req.user.sub;
-    return await this.appService.getWishlistPageData(userId);
+    return await this.appService.getWishlistPageData(userId, query, page, limit);
   }
 }

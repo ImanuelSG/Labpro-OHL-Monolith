@@ -1,16 +1,16 @@
-<nav class="bg-mainblack py-4 px-10 h-20 w-full absolute top-0 z-50">
-  <div class="w-full flex justify-start items-center">
+<nav class="bg-mainblack py-2 px-10 h-20 w-full absolute top-0 z-50">
+  <div class="w-full flex justify-start items-center h-full">
     <!-- Logo -->
     <a href="/">
-      <img src="/images/logo.png" class="object-cover items-center w-[152px] h[50px]" />
+      <img src="/images/logo.png" class="object-cover items-center w-[152px] h-auto" />
     </a>
 
     <!-- Links -->
     <div class="hidden md:flex space-x-12 ml-auto items-center">
       {{#if isAuthenticated}}
-      <a href="/bought-films" class="text-mainwhite">Bought Films</a>
-      <a href="/wishlist" class="text-mainwhite">WishList</a>
-      <a href="#" onclick="handleLogout()" class="text-mainwhite">Logout</a>
+      <a href="/bought-films" class="text-mainwhite hover:text-primary">Bought Films</a>
+      <a href="/wishlist" class="text-mainwhite hover:text-primary">WishList</a>
+      <a href="#" onclick="handleLogout()" class="text-mainwhite hover:text-primary">Logout</a>
       <div class="bg-mainwhite p-3 flex flex-row gap-2 rounded-lg items-center justify-center">
         <!-- Balance Icon -->
         <svg
@@ -71,8 +71,8 @@
         <span class="text-mainblack font-semibold">{{ balance }}</span>
       </div>
       {{else}}
-      <a href="/login" class="text-mainwhite">Login</a>
-      <a href="/register" class="text-mainwhite">Register</a>
+      <a href="/login" class="text-mainwhite hover:text-primary">Login</a>
+      <a href="/register" class="text-mainwhite hover:text-primary">Register</a>
       {{/if}}
     </div>
 
@@ -103,9 +103,9 @@
     class="hidden flex-col space-y-2 bg-blackred p-4 absolute top-20 left-0 w-full rounded-b-lg"
   >
     {{#if isAuthenticated}}
-    <a href="/bought-films" class="text-mainwhite">Bought Films</a>
-    <a href="/wishlist" class="text-mainwhite">WishList</a>
-    <a href="#" onclick="handleLogout()" class="text-mainwhite">Logout</a>
+    <a href="/bought-films" class="text-mainwhite hover:text-primary">Bought Films</a>
+    <a href="/wishlist" class="text-mainwhite hover:text-primary">WishList</a>
+    <a href="#" onclick="handleLogout()" class="text-mainwhite hover:text-primary">Logout</a>
     <div class="bg-mainwhite p-3 flex flex-row gap-2 rounded-lg items-center">
       <!-- Balance Icon -->
       <svg
@@ -166,8 +166,8 @@
       <span class="text-mainblack font-semibold">{{ balance }}</span>
     </div>
     {{else}}
-    <a href="/login" class="text-mainwhite">Login</a>
-    <a href="/register" class="text-mainwhite">Register</a>
+    <a href="/login" class="text-mainwhite hover:text-primary">Login</a>
+    <a href="/register" class="text-mainwhite hover:text-primary">Register</a>
     {{/if}}
   </div>
 </nav>

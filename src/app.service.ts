@@ -110,16 +110,24 @@ export class AppService {
     };
   }
 
-  async getWishlistPageData(userId: string) {
+  async getWishlistPageData(userId: string, query: string, page: string, limit: string) {
+    const { pageNumber, limitNumber } = this.parsePaginationParams(page, limit);
+
     const [wishlistData, balance] = await Promise.all([
-      this.wishlistService.findAll(userId),
+      this.wishlistService.findAll(userId, query, pageNumber, limitNumber),
       this.getBalanceData(userId),
     ]);
 
+    const { wishlist, totalCount } = wishlistData.data;
+    const totalPages = Math.ceil(totalCount / limitNumber);
+
     return {
       isAuthenticated: true,
-      films: wishlistData.data.films,
+      films: wishlist,
       balance,
+      query,
+      page: pageNumber,
+      totalPages,
     };
   }
 }

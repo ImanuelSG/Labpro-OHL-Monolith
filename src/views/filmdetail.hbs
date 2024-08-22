@@ -138,7 +138,7 @@
         try {
           showAlert(
             'Confirm Purchase',
-            `Are you sure you want to buy this film for Rp.${price}?`,
+            `Are you sure you want to buy this film for ${price}?`,
             async function () {
               try {
                 startLoading();
@@ -488,7 +488,7 @@
               <!-- Modal Header -->
               <div class="flex justify-between items-center pb-3">
                 <p class="text-xl font-semibold">Submit Your Review</p>
-                <div class="cursor-pointer" id="close-modal">
+                <div class="cursor-pointer" id="close-modal" onclick="closeModal()">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-6 w-6"
@@ -546,7 +546,7 @@
             onclick="confirmPurchase('{{ film.price }}')"
             class="bg-primary text-mainwhite py-2 px-4 rounded-lg hover:opacity-80"
           >
-            Buy for Rp.{{ film.price }}
+            Buy for {{ film.price }}
           </button>
           {{/if}}
           {{else}}

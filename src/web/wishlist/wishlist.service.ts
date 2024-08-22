@@ -44,15 +44,85 @@ export class WishlistService {
     }
   }
 
-  async findAll(userId: string) {
+  async findAll(userId: string, query?: string, page: number = 1, limit: number = 6) {
     try {
-      const wishlist = await this.prisma.wishlist.findMany({
+      const totalCount = await this.prisma.wishlist.count({
         where: {
           userId: userId,
+          Film: query
+            ? {
+                OR: [
+                  {
+                    title: {
+                      contains: query,
+                      mode: 'insensitive',
+                    },
+                  },
+                  {
+                    director: {
+                      contains: query,
+                      mode: 'insensitive',
+                    },
+                  },
+                ],
+              }
+            : {},
         },
       });
 
-      return createResponse('success', 'Wishlist retrieved successfully', wishlist);
+      const pageCount = Math.ceil(totalCount / limit);
+      const currentPage = Math.max(1, Math.min(page, pageCount));
+      const skip = (currentPage - 1) * limit;
+
+      const wishlist = await this.prisma.wishlist.findMany({
+        where: {
+          userId: userId,
+          Film: query
+            ? {
+                OR: [
+                  {
+                    title: {
+                      contains: query,
+                      mode: 'insensitive',
+                    },
+                  },
+                  {
+                    director: {
+                      contains: query,
+                      mode: 'insensitive',
+                    },
+                  },
+                ],
+              }
+            : {},
+        },
+        include: {
+          Film: {
+            select: {
+              id: true,
+              title: true,
+              director: true,
+              rating: true,
+              price: true,
+              genre: true,
+              release_year: true,
+              cover_image_url: true,
+              duration: true,
+              ratingCount: true,
+              description: true,
+            },
+          },
+        },
+        skip: skip,
+        take: limit,
+      });
+
+      const finalFilms = wishlist.map((wishlistItem) => wishlistItem.Film);
+
+      return createResponse('success', 'Wishlist retrieved', {
+        wishlist: finalFilms,
+        totalCount,
+      });
     } catch (error) {
       return createResponse(
         'error',

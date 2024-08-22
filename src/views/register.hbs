@@ -53,7 +53,8 @@
     "
     class="font-sans flex justify-center items-center min-h-screen"
   >
-    <div class="w-full max-w-lg p-10 rounded-lg shadow-md bg-mainblack">
+    {{> navbar isAuthenticated=isAuthenticated balance=balance}}
+    <div class="w-full max-w-lg p-10 rounded-lg shadow-md bg-mainblack mt-20">
       <section class="flex flex-col items-center justify-center">
         <img src="/images/logo.png" class="object-cover items-center" alt="Image of Proflix Logo" />
 
