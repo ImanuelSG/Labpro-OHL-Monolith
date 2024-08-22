@@ -59,7 +59,7 @@ model Transaction {
   id       String   @id @default(cuid())
   filmId   String
   userId   String
-  boughtAt DateTime
+  boughtAt DateTime @default(now())
   User     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   Film     Film     @relation(fields: [filmId], references: [id], onDelete: Cascade)
 
@@ -67,13 +67,14 @@ model Transaction {
 }
 
 model Review {
-  id       String @id @default(cuid())
-  filmId   String
-  username String
-  review   String
-  rating   Int
-  User     User   @relation(fields: [username], references: [username], onDelete: Cascade)
-  Film     Film   @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  filmId    String
+  username  String
+  review    String
+  rating    Int
+  createdAt DateTime @default(now())
+  User      User     @relation(fields: [username], references: [username], onDelete: Cascade)
+  Film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade)
 
   @@unique([filmId, username])
 }

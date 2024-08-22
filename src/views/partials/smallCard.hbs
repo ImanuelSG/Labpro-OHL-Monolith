@@ -1,0 +1,72 @@
+<a href="/film/{{ this.id }}" class="w-fit">
+  <div
+    class="h-[400px] w-[200px] flex flex-row hover:scale-105 transition-transform duration-300 cursor-pointer bg-mainblack p-4 rounded-lg shadow-lg"
+  >
+    <div class="h-[400px] w-[200px] rounded-lg flex flex-col gap-4">
+      <img
+        src="{{#if this.cover_image_url}}{{ this.cover_image_url }}{{else}}/no-cover.png{{/if}}"
+        alt="Poster of {{ this.title }}"
+        height="400"
+        width="200"
+        class="rounded-t-lg shadow-lg"
+      />
+      <section class="flex flex-col justify-around h-full">
+        <section class="flex flex-row w-full">
+          <section class="flex flex-col gap-1">
+            <h1 class="text-white font-bold text-lg">{{ this.title }} ({{ this.release_year }})</h1>
+            <p class="text-white font-light text-sm">{{ this.director }}</p>
+          </section>
+        </section>
+
+        <!-- Star Rating Component -->
+        <section class="flex flex-row justify-center">
+          <div class="flex items-center relative">
+            {{#each (range 0 5)}}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 
+      {{#if (isPartialStar this ../rating)}}text-white 
+      {{else if (lt this ../rating)}}text-[#FFD700]
+      {{else}}text-white{{/if}}"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.82a1 1 0 00.95.69h5.104c.969 0 1.371 1.24.588 1.81l-4.13 2.996a1 1 0 00-.364 1.118l1.563 4.82c.3.921-.755 1.688-1.538 1.118l-4.131-2.996a1 1 0 00-1.175 0l-4.131 2.996c-.783.57-1.838-.197-1.538-1.118l1.563-4.82a1 1 0 00-.364-1.118l-4.13-2.996c-.783-.57-.38-1.81.588-1.81h5.104a1 1 0 00.95-.69l1.562-4.82z"
+              />
+            </svg>
+            {{#if (isPartialStar this ../rating)}}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 absolute text-[#FFD700] z-10"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              style="left: {{multiply this 20}}%;"
+            >
+              <defs>
+                <clipPath id="star-clip-{{ this }}">
+                  <rect x="0" y="0" width="{{mulSub ../rating this 100}}%" height="100%" />
+                </clipPath>
+              </defs>
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.82a1 1 0 00.95.69h5.104c.969 0 1.371 1.24.588 1.81l-4.13 2.996a1 1 0 00-.364 1.118l1.563 4.82c.3.921-.755 1.688-1.538 1.118l-4.131-2.996a1 1 0 00-1.175 0l-4.131 2.996c-.783.57-1.838-.197-1.538-1.118l1.563-4.82a1 1 0 00-.364-1.118l-4.13-2.996c-.783-.57-.38-1.81.588-1.81h5.104a1 1 0 00.95-.69l1.562-4.82z"
+                clip-path="url(#star-clip-{{ this }})"
+              />
+            </svg>
+            {{/if}}
+            {{/each}}
+          </div>
+
+          <!-- Genre Badges -->
+          <section class="ml-auto flex flex-wrap gap-4 justify-end">
+            {{#each (slice this.genre 0 2) as |genre|}}
+            <div class="bg-primary text-mainwhite text-xs px-2 py-1 rounded-lg h-fit">
+              {{ genre }}
+            </div>
+            {{/each}}
+          </section>
+        </section>
+      </section>
+    </div>
+  </div>
+</a>

@@ -150,7 +150,7 @@ export class WebFilmsService {
           matchingGenresCount: film.genre.filter((genre) => film.genre.includes(genre)).length,
         }))
         .sort((a, b) => b.matchingGenresCount - a.matchingGenresCount)
-        .slice(0, 6); // Take the top 5 films
+        .slice(0, 6); // Take the top 4 films
 
       return createResponse('success', 'Film retrieved successfully', {
         film,
